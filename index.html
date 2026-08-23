@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>งานเภสัชสนเทศ | โรงพยาบาลเจริญกรุงประชารักษ์</title>
+  <meta name="description" content="เว็บไซต์งานเภสัชสนเทศ กลุ่มงานเภสัชกรรม โรงพยาบาลเจริญกรุงประชารักษ์ — ข่าวสาร นโยบาย PTC ทะเบียนยา และลิงก์ฐานข้อมูลที่เกี่ยวข้อง" />
+  <script>
+    (function () {
+      var saved = localStorage.getItem("dis-theme");
+      var theme = saved || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+      document.documentElement.dataset.theme = theme;
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/theme.css" />
+</head>
+<body>
+  <header class="site-header" id="site-header" data-active="home"></header>
+
+  <section class="hero">
+    <div class="container">
+      <span class="eyebrow"><span class="dot"></span> กลุ่มงานเภสัชกรรม รพ.เจริญกรุงประชารักษ์</span>
+      <h1>งานเภสัชสนเทศ<br /><span class="accent">Drug Information Service</span></h1>
+      <p>
+        ศูนย์รวมข่าวสาร นโยบาย PTC ทะเบียนยา และเครื่องมืออ้างอิงของกลุ่มงานเภสัชกรรม
+        โรงพยาบาลเจริญกรุงประชารักษ์ สำนักการแพทย์ กรุงเทพมหานคร
+      </p>
+    </div>
+  </section>
+
+  <main>
+    <section class="section">
+      <div class="container">
+        <div class="section-title">
+          <h2>ข่าวและประกาศ</h2>
+        </div>
+        <div class="card-grid" id="newsList">
+          <p class="empty-state">กำลังโหลดข่าว...</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-alt">
+      <div class="container">
+        <div class="section-title">
+          <h2>ทางลัดที่ใช้บ่อย</h2>
+        </div>
+        <div class="quicklink-grid">
+          <a class="quicklink" href="#" onclick="return false;">
+            <span class="icon">📋</span>
+            <span>
+              <span class="label-main">แบบฟอร์ม จ.2</span>
+              <span class="label-sub">เร็วๆ นี้</span>
+            </span>
+          </a>
+          <a class="quicklink" href="#" onclick="return false;">
+            <span class="icon">💊</span>
+            <span>
+              <span class="label-main">บัญชียาหลักแห่งชาติ</span>
+              <span class="label-sub">เร็วๆ นี้</span>
+            </span>
+          </a>
+          <a class="quicklink" href="#" onclick="return false;">
+            <span class="icon">🏛️</span>
+            <span>
+              <span class="label-main">กรมบัญชีกลาง</span>
+              <span class="label-sub">เร็วๆ นี้</span>
+            </span>
+          </a>
+          <a class="quicklink" href="#" onclick="return false;">
+            <span class="icon">📖</span>
+            <span>
+              <span class="label-main">คู่มือ Drug Catalog</span>
+              <span class="label-sub">เร็วๆ นี้</span>
+            </span>
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer" id="site-footer"></footer>
+
+  <script src="js/partials.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
