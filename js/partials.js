@@ -22,7 +22,7 @@ const NAV_ITEMS = [
     label: "ฐานข้อมูล",
     children: [
       { key: "registry", label: "ทะเบียนยา/เวชภัณฑ์", href: "registry.html", soon: true },
-      { key: "links", label: "Database ภายนอก", href: "links.html", soon: true },
+      { key: "links", label: "Database ภายนอก", href: "links.html" },
       { key: "dashboard", label: "Dashboard", href: "dashboard.html" },
     ],
   },

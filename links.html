@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Database ภายนอก | งานเภสัชสนเทศ</title>
+  <meta name="description" content="รวมลิงก์ฐานข้อมูล/ระบบของหน่วยงานภายนอกที่เกี่ยวข้องกับงานเภสัชกรรม เช่น บัญชียาหลักแห่งชาติ, แบบฟอร์ม จ.2, กรมบัญชีกลาง" />
+  <script>
+    (function () {
+      var saved = localStorage.getItem("dis-theme");
+      var theme = saved || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+      document.documentElement.dataset.theme = theme;
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/theme.css?v=4" />
+</head>
+<body>
+  <header class="site-header" id="site-header" data-active="links"></header>
+
+  <section class="hero">
+    <div class="container">
+      <span class="eyebrow"><span class="dot"></span> ฐานข้อมูล › Database ภายนอก</span>
+      <h1>Database<br /><span class="accent">ภายนอก</span></h1>
+      <p>
+        รวมลิงก์ไปยังฐานข้อมูล/ระบบของหน่วยงานภายนอกที่เกี่ยวข้องกับงานเภสัชกรรม
+        ลิงก์ตรงไปหาแหล่งต้นทางเสมอ (ไม่ copy เนื้อหามาเก็บเอง) เพื่อให้ได้ข้อมูลเวอร์ชันล่าสุดทุกครั้ง
+      </p>
+    </div>
+  </section>
+
+  <main>
+    <section class="section">
+      <div class="container">
+        <div class="card-grid">
+          <a class="card" href="https://ndp.fda.moph.go.th/drug/guidelines" target="_blank" rel="noopener" style="display: block; color: inherit;">
+            <span class="tag gold">อัปเดตล่าสุด 2569</span>
+            <h3>แบบฟอร์มและแนวทางการสั่งใช้ยา R2</h3>
+            <div class="meta">สำนักงานคณะกรรมการอาหารและยา (อย.) — ระบบบัญชียาหลักแห่งชาติ</div>
+            <p>แบบฟอร์มและแนวทางการสั่งใช้ยาที่ต้องมีการควบคุมพิเศษ (R2) อ้างอิงบัญชียาหลักแห่งชาติฉบับล่าสุด</p>
+          </a>
+          <div class="card" style="opacity: 0.6;">
+            <span class="tag">เร็วๆ นี้</span>
+            <h3>แบบฟอร์ม จ.2</h3>
+            <div class="meta">รอลิงก์จริง</div>
+            <p>แบบฟอร์มขอเบิกยานอกบัญชียาหลักแห่งชาติ</p>
+          </div>
+          <div class="card" style="opacity: 0.6;">
+            <span class="tag">เร็วๆ นี้</span>
+            <h3>บัญชียาหลักแห่งชาติ (ฉบับเต็ม)</h3>
+            <div class="meta">รอลิงก์จริง</div>
+            <p>ประกาศคณะกรรมการพัฒนาระบบยาแห่งชาติ</p>
+          </div>
+          <div class="card" style="opacity: 0.6;">
+            <span class="tag">เร็วๆ นี้</span>
+            <h3>กรมบัญชีกลาง</h3>
+            <div class="meta">รอลิงก์จริง</div>
+            <p>หลักเกณฑ์การเบิกจ่ายค่ายาและเวชภัณฑ์ สิทธิสวัสดิการรักษาพยาบาลข้าราชการ</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer" id="site-footer"></footer>
+
+  <script src="js/partials.js?v=3"></script>
+</body>
+</html>
