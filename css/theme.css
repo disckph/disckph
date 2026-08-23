@@ -184,7 +184,7 @@ a:hover {
   transform: rotate(15deg);
 }
 
-.main-nav ul {
+.main-nav > ul {
   list-style: none;
   display: flex;
   gap: 2px;
@@ -314,7 +314,7 @@ a:hover {
   .main-nav.open {
     display: block;
   }
-  .main-nav ul {
+  .main-nav > ul {
     flex-direction: column;
     padding: 10px;
     gap: 2px;
