@@ -54,7 +54,12 @@ python -m http.server 8000
 
 ## ขยายเพิ่มหน้าใหม่ (Policy, ทะเบียนยา, Database links, ฯลฯ)
 
-1. สร้างไฟล์ `.html` ใหม่ในโฟลเดอร์นี้ (เช่น `policy.html`)
-2. copy โครง `<header>`/`<footer>`/script tags จาก `index.html`
-3. ตั้ง `data-active="policy"` ใน `<header id="site-header">` ให้ตรงกับ key ใน `js/partials.js`
+1. สร้างไฟล์ `.html` ใหม่ในโฟลเดอร์นี้ (เช่น `sop.html`)
+2. copy โครง `<header>`/`<footer>`/script tags จาก `index.html` — **อย่าลืม copy query string `?v=N` ท้าย `theme.css`/`partials.js`/`main.js` ไปด้วย** (ดูหัวข้อ cache ด้านล่าง)
+3. ตั้ง `data-active="sop"` ใน `<header id="site-header">` ให้ตรงกับ `key` ใน `js/partials.js` (ถ้าอยู่ใน dropdown ก็ใช้ key ของลูก ไม่ใช่ key ของกลุ่ม)
 4. ไปแก้ `js/partials.js` เอา `soon: true` ของเมนูนั้นออก แล้วเว็บทุกหน้าจะลิงก์ไปหาได้ทันที — ธีมสี/ฟอนต์เหมือนหน้าแรกอัตโนมัติเพราะใช้ `css/theme.css` ร่วมกัน
+
+## แก้ CSS/JS แล้วผู้ใช้เห็นของเก่าค้าง (browser cache)
+
+`theme.css`, `js/partials.js`, `js/main.js` ถูกลิงก์ด้วย query string `?v=2` ท้ายชื่อไฟล์ (เช่น `css/theme.css?v=2`)
+**ทุกครั้งที่แก้ไฟล์พวกนี้ ต้องเพิ่มเลข v ในทุกหน้าที่ลิงก์ไฟล์นั้น** (เช่น `?v=2` → `?v=3`) ไม่งั้นเบราว์เซอร์ของคนที่เคยเข้าเว็บแล้วจะยังใช้ไฟล์เวอร์ชันเก่าจากแคชอยู่ ทำให้เห็นบั๊กที่แก้ไปแล้วเหมือนไม่หาย (สาเหตุที่ dropdown เมนูเคยดูเหมือนค้างโชว์ตลอดเวลา)
