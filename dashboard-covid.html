@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CKPH COVID Dashboard | งานเภสัชสนเทศ</title>
+  <meta name="description" content="ระบบติดตามสต็อกยา COVID-19 และยา High Alert แบบเรียลไทม์ 9 หน่วยงาน กลุ่มงานเภสัชกรรม โรงพยาบาลเจริญกรุงประชารักษ์" />
+  <meta name="robots" content="noindex, nofollow" />
+  <script>
+    (function () {
+      var saved = localStorage.getItem("dis-theme");
+      var theme = saved || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+      document.documentElement.dataset.theme = theme;
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/theme.css?v=2" />
+</head>
+<body>
+  <header class="site-header" id="site-header" data-active="dashboard"></header>
+
+  <section class="hero">
+    <div class="container">
+      <span class="eyebrow"><span class="dot"></span> <a href="dashboard.html" style="color: inherit;">ฐานข้อมูล › Dashboard</a> › CKPH COVID Dashboard</span>
+      <h1>CKPH COVID<br /><span class="accent">Drug Stock Dashboard</span></h1>
+      <p>
+        ระบบติดตามสต็อกยารักษาโรคโควิด-19 และยา High Alert แบบเรียลไทม์ ครอบคลุม 9 หน่วยงานในกลุ่มงานเภสัชกรรม
+        อัปเดตอัตโนมัติทุกชั่วโมงจากแบบฟอร์มรายวันและยอดจ่ายจริงจาก ePhis
+      </p>
+    </div>
+  </section>
+
+  <main>
+    <section class="section">
+      <div class="container">
+        <div class="section-title">
+          <h2>ยาที่ติดตาม</h2>
+        </div>
+        <div class="card-grid">
+          <div class="card">
+            <span class="tag">เม็ด</span>
+            <h3>Molnupiravir</h3>
+            <p>40 เม็ด/ขวด</p>
+          </div>
+          <div class="card">
+            <span class="tag">เม็ด</span>
+            <h3>Favipiravir</h3>
+            <p>50 เม็ด/ขวด — แยกยอดที่กันไว้ผลิตยาน้ำ</p>
+          </div>
+          <div class="card">
+            <span class="tag">ขวด</span>
+            <h3>Favipiravir suspension</h3>
+            <p>ผลิตที่ห้องผลิต · อายุ 14 วันหลังผลิต</p>
+          </div>
+          <div class="card">
+            <span class="tag">กล่อง</span>
+            <h3>PAXLOVID</h3>
+            <p>ติดตามยอดคงเหลือรายหน่วย</p>
+          </div>
+          <div class="card">
+            <span class="tag">Vial</span>
+            <h3>Remdesivir</h3>
+            <p>สำรองเฉพาะคลังยา / ชั้น 5 (IPD) / ห้องยา G</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-alt">
+      <div class="container">
+        <div class="section-title">
+          <h2>เข้าใช้งานระบบ</h2>
+        </div>
+        <div class="card" style="max-width: 640px;">
+          <span class="tag gold">สำหรับบุคลากรภายในเท่านั้น</span>
+          <h3>เปิด Live Dashboard</h3>
+          <p>
+            แสดงยอดคงเหลือรายหน่วยงาน, days-on-hand, และแนวโน้มย้อนหลัง 10 วัน
+            อ่านข้อมูลสดจาก Google Sheet ทุกครั้งที่เปิดหน้า ไม่ต้องล็อกอิน แต่ไม่เผยแพร่ตัวเลขต่อสาธารณะ
+            เพื่อความเหมาะสมของข้อมูลสต็อกยา High Alert — ลิงก์นี้สำหรับใช้งานภายในกลุ่มงานเท่านั้น
+          </p>
+          <form id="dashGateForm" style="margin-top: 8px; display: flex; gap: 8px; flex-wrap: wrap;" autocomplete="off">
+            <input
+              type="password"
+              id="dashGatePw"
+              placeholder="รหัสผ่าน"
+              style="flex: 1; min-width: 160px; padding: 11px 14px; border-radius: var(--radius-sm); border: 1px solid var(--color-border); background: var(--color-bg); color: var(--color-text); font-family: inherit; font-size: 0.92rem;"
+            />
+            <button
+              type="submit"
+              style="padding: 11px 18px; border-radius: var(--radius-sm); border: none; background: var(--color-primary); color: #fff; font-family: inherit; font-weight: 700; font-size: 0.92rem; cursor: pointer;"
+            >
+              เข้าใช้งาน
+            </button>
+          </form>
+          <p id="dashGateError" style="display: none; color: #c0392b; font-size: 0.85rem; margin: 8px 0 0;">
+            รหัสผ่านไม่ถูกต้อง
+          </p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer" id="site-footer"></footer>
+
+  <script src="js/partials.js?v=3"></script>
+  <script>
+    // กันคนทั่วไปเดินผ่านมาเจอเฉยๆ เท่านั้น — ไม่ใช่ระบบความปลอดภัยจริง (ดูรหัส/ลิงก์จาก view-source ได้)
+    (function () {
+      const DASH_PW = "11541";
+      const DASH_URL =
+        "https://script.google.com/macros/s/AKfycbxSbWMgsSJmuZAlT6MeFKNJQpVvGdRLFES3C9HYQzWm1LuLzbR-CNgHdU3DiJrh8r-G8g/exec";
+
+      const form = document.getElementById("dashGateForm");
+      const input = document.getElementById("dashGatePw");
+      const error = document.getElementById("dashGateError");
+
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        if (input.value.trim() === DASH_PW) {
+          error.style.display = "none";
+          window.open(DASH_URL, "_blank", "noopener");
+          input.value = "";
+        } else {
+          error.style.display = "block";
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
