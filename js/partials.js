@@ -132,7 +132,7 @@ function renderFooter() {
     <div class="container footer-grid">
       <div>
         &copy; ${year} งานเภสัชสนเทศ กลุ่มงานเภสัชกรรม<br />
-        โรงพยาบาลเจริญกรุงประชารักษ์ สำนักการแพทย์ กรุงเทพมหานคร
+        <span style="white-space: nowrap;">โรงพยาบาลเจริญกรุงประชารักษ์</span> สำนักการแพทย์ กรุงเทพมหานคร
       </div>
       <div>จัดทำเพื่อการสื่อสารภายในหน่วยงาน</div>
     </div>
