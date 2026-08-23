@@ -1,29 +1,75 @@
 /* Header/Footer ใช้ร่วมกันทุกหน้า — แก้เมนูที่นี่ที่เดียว หน้าอื่นอัปเดตตาม
    วิธีใช้ในแต่ละหน้า: <div id="site-header" data-active="home"></div>
                        <div id="site-footer"></div>
-   แล้วแนบ <script src="js/partials.js"></script> ท้ายหน้า (ปรับ path ../ ตามความลึกของโฟลเดอร์) */
+   แล้วแนบ <script src="js/partials.js"></script> ท้ายหน้า (ปรับ path ../ ตามความลึกของโฟลเดอร์)
+
+   โครงสร้างเมนู: รายการที่มี href = ลิงก์เดี่ยว, รายการที่มี children = dropdown
+   ใส่ data-active ตรงกับ key ของลิงก์เดี่ยว หรือ key ของ parent ถ้าอยู่ในหน้าลูกของ dropdown นั้น */
 
 const NAV_ITEMS = [
-  { key: "home", label: "หน้าแรก / ข่าว", href: "index.html" },
-  { key: "policy", label: "Policy PTC", href: "policy.html", soon: true },
-  { key: "registry", label: "อัพเดททะเบียนยา", href: "registry.html", soon: true },
-  { key: "links", label: "Database ภายนอก", href: "links.html", soon: true },
-  { key: "catalog", label: "Drug Catalog", href: "catalog.html", soon: true },
-  { key: "dashboard", label: "Dashboard", href: "dashboard.html", soon: true },
+  { key: "home", label: "หน้าแรก", href: "index.html" },
+  { key: "news", label: "ข่าวสาร", href: "news.html", soon: true },
+  {
+    key: "policy",
+    label: "คู่มือ/ระเบียบ",
+    children: [
+      { key: "sop", label: "ระเบียบปฏิบัติกลุ่มงานเภสัชกรรม", href: "sop.html", soon: true },
+      { key: "dis-knowledge", label: "ความรู้และบริการงานเภสัชสนเทศ", href: "dis-knowledge.html", soon: true },
+    ],
+  },
+  {
+    key: "database",
+    label: "ฐานข้อมูล",
+    children: [
+      { key: "registry", label: "ทะเบียนยา/เวชภัณฑ์", href: "registry.html", soon: true },
+      { key: "links", label: "Database ภายนอก", href: "links.html", soon: true },
+      { key: "dashboard", label: "Dashboard", href: "dashboard.html", soon: true },
+    ],
+  },
+  {
+    key: "resources",
+    label: "คลังทรัพยากร",
+    children: [
+      { key: "downloads", label: "โปรแกรม/ดาวน์โหลด", href: "downloads.html", soon: true },
+      { key: "elearning", label: "E-learning", href: "elearning.html", soon: true },
+      { key: "media", label: "สื่อการเรียนการสอน", href: "media.html", soon: true },
+    ],
+  },
+  { key: "academic", label: "ผลงานวิชาการ", href: "academic.html", soon: true },
 ];
+
+function renderNavLink(item, active) {
+  if (item.soon) {
+    return `<a class="disabled" href="#" onclick="return false;">${item.label}<span class="soon-tag">เร็วๆ นี้</span></a>`;
+  }
+  const cls = item.key === active ? "active" : "";
+  return `<a class="${cls}" href="${item.href}">${item.label}</a>`;
+}
+
+function renderNav(active) {
+  return NAV_ITEMS.map((item) => {
+    if (item.children) {
+      const isActiveGroup = item.children.some((c) => c.key === active);
+      const childrenHtml = item.children
+        .map((child) => `<li>${renderNavLink(child, active)}</li>`)
+        .join("");
+      return `
+        <li class="nav-dropdown">
+          <button class="dropdown-trigger ${isActiveGroup ? "active" : ""}" type="button">
+            ${item.label} <span class="caret">&#9662;</span>
+          </button>
+          <ul class="dropdown-panel">${childrenHtml}</ul>
+        </li>
+      `;
+    }
+    return `<li>${renderNavLink(item, active)}</li>`;
+  }).join("");
+}
 
 function renderHeader() {
   const el = document.getElementById("site-header");
   if (!el) return;
   const active = el.dataset.active || "";
-
-  const navHtml = NAV_ITEMS.map((item) => {
-    if (item.soon) {
-      return `<li><a class="disabled" href="#" onclick="return false;">${item.label}<span class="soon-tag">เร็วๆ นี้</span></a></li>`;
-    }
-    const cls = item.key === active ? "active" : "";
-    return `<li><a class="${cls}" href="${item.href}">${item.label}</a></li>`;
-  }).join("");
 
   el.innerHTML = `
     <div class="nav-pill">
@@ -35,7 +81,7 @@ function renderHeader() {
         </span>
       </a>
       <nav class="main-nav" id="mainNav">
-        <ul>${navHtml}</ul>
+        <ul>${renderNav(active)}</ul>
       </nav>
       <button class="theme-toggle" id="themeToggle" aria-label="สลับโหมดมืด/สว่าง"></button>
       <button class="nav-toggle" id="navToggle" aria-label="เมนู">&#9776;</button>
@@ -47,6 +93,21 @@ function renderHeader() {
   if (toggle && nav) {
     toggle.addEventListener("click", () => nav.classList.toggle("open"));
   }
+
+  // Dropdown: คลิกเปิด/ปิด, เปิดได้ทีละอันเดียว, คลิกนอกเมนูปิดหมด
+  const dropdowns = el.querySelectorAll(".nav-dropdown");
+  dropdowns.forEach((dd) => {
+    const trigger = dd.querySelector(".dropdown-trigger");
+    trigger.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const isOpen = dd.classList.contains("open");
+      dropdowns.forEach((other) => other.classList.remove("open"));
+      dd.classList.toggle("open", !isOpen);
+    });
+  });
+  document.addEventListener("click", () => {
+    dropdowns.forEach((dd) => dd.classList.remove("open"));
+  });
 
   const themeBtn = document.getElementById("themeToggle");
   if (themeBtn) {

@@ -223,6 +223,75 @@ a:hover {
   vertical-align: middle;
 }
 
+/* ---------- Nav dropdown groups ---------- */
+.nav-dropdown {
+  position: relative;
+}
+.dropdown-trigger {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: none;
+  border: none;
+  color: var(--color-text-muted);
+  padding: 9px 14px;
+  border-radius: var(--radius-pill);
+  font-size: 0.9rem;
+  font-family: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.dropdown-trigger:hover,
+.dropdown-trigger.active {
+  background: var(--color-primary-light);
+  color: var(--color-primary-dark);
+}
+.dropdown-trigger .caret {
+  font-size: 0.6rem;
+  transition: transform 0.15s ease;
+}
+.nav-dropdown.open .dropdown-trigger .caret {
+  transform: rotate(180deg);
+}
+
+.dropdown-panel {
+  display: none;
+  list-style: none;
+  margin: 0;
+  padding: 8px;
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 0;
+  min-width: 240px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-hover);
+}
+.nav-dropdown.open .dropdown-panel {
+  display: block;
+}
+.dropdown-panel a {
+  display: block;
+  padding: 9px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: var(--color-text);
+  white-space: nowrap;
+}
+.dropdown-panel a:hover,
+.dropdown-panel a.active {
+  background: var(--color-primary-light);
+  color: var(--color-primary-dark);
+}
+.dropdown-panel a.disabled {
+  color: #b3bab4;
+  cursor: default;
+  pointer-events: none;
+}
+
 @media (max-width: 860px) {
   .nav-toggle {
     display: block;
@@ -248,6 +317,23 @@ a:hover {
   }
   .main-nav a {
     border-radius: var(--radius-sm);
+  }
+
+  .dropdown-trigger {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .dropdown-panel {
+    display: none;
+    position: static;
+    box-shadow: none;
+    border: none;
+    background: var(--color-bg-alt);
+    margin: 2px 0 4px;
+    padding: 4px 4px 4px 14px;
+  }
+  .nav-dropdown.open .dropdown-panel {
+    display: block;
   }
 }
 
