@@ -35,6 +35,13 @@ const NAV_ITEMS = [
       { key: "media", label: "สื่อการเรียนการสอน", href: "media.html", soon: true },
     ],
   },
+  {
+    key: "systems",
+    label: "ระบบภายใน",
+    children: [
+      { key: "training", label: "ระบบขออนุมัติไปอบรม/ประชุม", href: "training.html" },
+    ],
+  },
   { key: "academic", label: "ผลงานวิชาการ", href: "academic.html", soon: true },
 ];
 
