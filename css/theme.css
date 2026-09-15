@@ -405,6 +405,9 @@ a:hover {
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
+  padding-bottom: 0.2em;
+  margin-bottom: -0.2em;
+  display: inline-block;
 }
 .hero p {
   margin: 0;
