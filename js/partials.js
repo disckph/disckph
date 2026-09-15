@@ -16,6 +16,7 @@ const NAV_ITEMS = [
       { key: "sop", label: "ระเบียบปฏิบัติกลุ่มงานเภสัชกรรม", href: "sop.html", soon: true },
       { key: "dis-knowledge", label: "ความรู้และบริการงานเภสัชสนเทศ", href: "dis-knowledge.html", soon: true },
       { key: "guidelines", label: "แนวทางเวชปฏิบัติ (Guideline)", href: "guidelines.html" },
+      { key: "due-forms", label: "แบบฟอร์ม DUE ยาปฏิชีวนะ", href: "due-forms.html" },
     ],
   },
   {

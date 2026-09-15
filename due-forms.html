@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>แบบฟอร์ม DUE ยาปฏิชีวนะ | งานเภสัชสนเทศ</title>
+  <meta name="description" content="แบบฟอร์มประเมินการใช้ยาปฏิชีวนะ (Drug Use Evaluation, DUE) สำหรับยาที่ต้องมีการควบคุมพิเศษ พิมพ์แนบส่งห้องยาพร้อมใบสั่งยา" />
+  <script>
+    (function () {
+      var saved = localStorage.getItem("dis-theme");
+      var theme = saved || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+      document.documentElement.dataset.theme = theme;
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/theme.css?v=7" />
+  <style>
+    .form-actions { display: flex; gap: 0.6rem; flex-wrap: wrap; margin-top: 0.5rem; }
+    .form-actions a {
+      display: inline-block;
+      padding: 0.5rem 1rem;
+      border-radius: var(--radius-pill);
+      background: var(--color-primary);
+      color: #fff;
+      font-weight: 600;
+      font-size: 0.85rem;
+      text-decoration: none;
+    }
+    .form-actions a:hover { background: var(--color-primary-dark); }
+    .form-actions a.secondary {
+      background: transparent;
+      color: var(--color-primary);
+      border: 1px solid var(--color-primary);
+    }
+    .form-actions a.secondary:hover { background: var(--color-primary-light); }
+  </style>
+</head>
+<body>
+  <header class="site-header" id="site-header" data-active="due-forms"></header>
+
+  <section class="hero">
+    <div class="container">
+      <span class="eyebrow"><span class="dot"></span> คู่มือ/ระเบียบ › แบบฟอร์ม DUE ยาปฏิชีวนะ</span>
+      <h1>แบบฟอร์ม DUE<br /><span class="accent">ยาปฏิชีวนะ</span></h1>
+      <p>
+        แบบฟอร์มประเมินการใช้ยา (Drug Use Evaluation) สำหรับยาปฏิชีวนะที่ต้องมีการควบคุมพิเศษ
+        ดาวน์โหลด/พิมพ์แล้วกรอกแนบส่งห้องยาพร้อมใบสั่งยาทุกครั้งที่สั่งใช้ยากลุ่มนี้
+      </p>
+    </div>
+  </section>
+
+  <main>
+    <section class="section">
+      <div class="container">
+        <div class="card-grid">
+
+          <article class="card">
+            <span class="tag">DUE</span>
+            <h3>Ceftaroline (Zinforo)</h3>
+            <p>แบบประเมินการใช้ยา Ceftaroline (Zinforo)</p>
+            <div class="form-actions">
+              <a class="secondary" href="files/due-forms/due-ceftaroline-zinforo.pdf" target="_blank" rel="noopener">เปิดดู</a>
+              <a href="files/due-forms/due-ceftaroline-zinforo.pdf" download>ดาวน์โหลด</a>
+            </div>
+          </article>
+
+          <article class="card">
+            <span class="tag">DUE</span>
+            <h3>Ceftazidime-avibactam (Zavicefta)</h3>
+            <p>แบบประเมินการใช้ยา Ceftazidime-avibactam (Zavicefta)</p>
+            <div class="form-actions">
+              <a class="secondary" href="files/due-forms/due-ceftaz-avi-zavicefta.pdf" target="_blank" rel="noopener">เปิดดู</a>
+              <a href="files/due-forms/due-ceftaz-avi-zavicefta.pdf" download>ดาวน์โหลด</a>
+            </div>
+          </article>
+
+          <article class="card">
+            <span class="tag">DUE</span>
+            <h3>Linezolid</h3>
+            <p>แบบประเมินการใช้ยา Linezolid</p>
+            <div class="form-actions">
+              <a class="secondary" href="files/due-forms/due-linezolid.pdf" target="_blank" rel="noopener">เปิดดู</a>
+              <a href="files/due-forms/due-linezolid.pdf" download>ดาวน์โหลด</a>
+            </div>
+          </article>
+
+          <article class="card">
+            <span class="tag">DUE</span>
+            <h3>Minocycline</h3>
+            <p>แบบประเมินการใช้ยา Minocycline</p>
+            <div class="form-actions">
+              <a class="secondary" href="files/due-forms/due-minocycline.pdf" target="_blank" rel="noopener">เปิดดู</a>
+              <a href="files/due-forms/due-minocycline.pdf" download>ดาวน์โหลด</a>
+            </div>
+          </article>
+
+          <article class="card">
+            <span class="tag">DUE</span>
+            <h3>Sitafloxacin</h3>
+            <p>แบบประเมินการใช้ยา Sitafloxacin</p>
+            <div class="form-actions">
+              <a class="secondary" href="files/due-forms/due-sitafloxacin.pdf" target="_blank" rel="noopener">เปิดดู</a>
+              <a href="files/due-forms/due-sitafloxacin.pdf" download>ดาวน์โหลด</a>
+            </div>
+          </article>
+
+          <article class="card">
+            <span class="tag">DUE</span>
+            <h3>Sulbactam</h3>
+            <p>แบบประเมินการใช้ยา Sulbactam</p>
+            <div class="form-actions">
+              <a class="secondary" href="files/due-forms/due-sulbactam.pdf" target="_blank" rel="noopener">เปิดดู</a>
+              <a href="files/due-forms/due-sulbactam.pdf" download>ดาวน์โหลด</a>
+            </div>
+          </article>
+
+          <article class="card">
+            <span class="tag">DUE</span>
+            <h3>Tigecycline</h3>
+            <p>แบบประเมินการใช้ยา Tigecycline</p>
+            <div class="form-actions">
+              <a class="secondary" href="files/due-forms/due-tigecycline.pdf" target="_blank" rel="noopener">เปิดดู</a>
+              <a href="files/due-forms/due-tigecycline.pdf" download>ดาวน์โหลด</a>
+            </div>
+          </article>
+
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer" id="site-footer"></footer>
+
+  <script src="js/partials.js?v=8"></script>
+</body>
+</html>
