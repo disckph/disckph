@@ -8,7 +8,7 @@
 
 const NAV_ITEMS = [
   { key: "home", label: "หน้าแรก", href: "index.html" },
-  { key: "news", label: "ข่าวสาร", href: "news.html", soon: true },
+  { key: "news", label: "ข่าวสาร", href: "news.html" },
   {
     key: "policy",
     label: "คู่มือ/ระเบียบ",

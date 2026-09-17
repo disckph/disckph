@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ข่าวสาร | งานเภสัชสนเทศ โรงพยาบาลเจริญกรุงประชารักษ์</title>
+  <meta name="description" content="ข่าวสารจากบริษัทยาและองค์การเภสัชกรรม — ยกเลิกจำหน่าย ยาขาดคราว เปลี่ยนแปลงผลิตภัณฑ์ ราคา และตัวแทนจำหน่าย สรุปโดยงานเภสัชสนเทศ" />
+  <script>
+    (function () {
+      var saved = localStorage.getItem("dis-theme");
+      var theme = saved || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+      document.documentElement.dataset.theme = theme;
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/theme.css?v=8" />
+</head>
+<body>
+  <header class="site-header" id="site-header" data-active="news"></header>
+
+  <section class="hero hero-compact">
+    <div class="container">
+      <span class="eyebrow"><span class="dot"></span> Newsletter งานเภสัชสนเทศ</span>
+      <h1>ข่าวสาร<span class="accent"> ยาและเวชภัณฑ์</span></h1>
+      <p>
+        สรุปหนังสือแจ้งจากบริษัทยาและองค์การเภสัชกรรมที่ส่งถึงกลุ่มงานเภสัชกรรม
+        เรียงจากล่าสุด กดหมวดเพื่อกรอง เลขที่หนังสือและวันที่อยู่ท้ายข่าวแต่ละชิ้น
+      </p>
+    </div>
+  </section>
+
+  <main>
+    <section class="section">
+      <div class="container">
+        <div class="chip-bar" id="newsFilter"></div>
+        <div class="news-list" id="newsFull">
+          <p class="empty-state">กำลังโหลดข่าว...</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer" id="site-footer"></footer>
+
+  <script src="js/partials.js?v=9"></script>
+  <script src="js/main.js?v=4"></script>
+</body>
+</html>
