@@ -709,3 +709,8 @@ a:hover {
   font-weight: 700;
   white-space: nowrap;
 }
+.card .tag.tag-teal {
+  color: #0c6b63;
+  background: #d9f2ef;
+}
+:root[data-theme="dark"] .card .tag.tag-teal { color: #7fded3; background: rgba(45, 190, 175, 0.18); }
