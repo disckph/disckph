@@ -42,6 +42,8 @@ const NAV_ITEMS = [
     label: "ระบบภายใน",
     children: [
       { key: "training", label: "ระบบขออนุมัติไปอบรม/ประชุม", href: "training.html" },
+      { key: "dis-ask", label: "ส่งคำถามถึงงานเภสัชสนเทศ", href: "record/ask.html" },
+      { key: "dis-record", label: "ระบบบันทึก DIS (เภสัชกร)", href: "record/index.html" },
     ],
   },
   { key: "academic", label: "ผลงานวิชาการ", href: "academic.html", soon: true },

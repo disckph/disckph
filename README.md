@@ -25,6 +25,18 @@ dis-site/
 └── data/news.json       รายการข่าว — เพิ่มข่าวใหม่แก้ไฟล์นี้อย่างเดียว
 ```
 
+## ระบบบันทึก DIS (`record/`)
+
+แอปบันทึกคำถาม DIS ตามแบบบันทึกภาคผนวก จ (add_pro4_12) — ข้อยกเว้นของกฎ "ไม่มี login" ข้างบน เพราะข้อมูลจริงเก็บใน **Supabase** (ไม่ได้อยู่ใน repo นี้) และเปิดอ่านได้เฉพาะผู้ใช้ที่ login (Row Level Security)
+
+- `record/index.html` — หน้าเภสัชกร (login ด้วยอีเมล/รหัสผ่านที่สร้างใน Supabase → Authentication → Users)
+- `record/ask.html` — ฟอร์มให้บุคลากรส่งคำถาม/รีเควส (ส่งได้อย่างเดียว อ่านไม่ได้)
+- `record/survey.html` — แบบประเมิน 5 ข้อ (ลิงก์คัดลอกจากแท็บ "คำขอจากเว็บ")
+- `record/js/config.js` — Supabase URL + publishable key (ฝังในเว็บได้โดยออกแบบ) **ห้ามใส่ secret/service_role key เด็ดขาด**
+- `record/js/lookups.js` — ตัวเลือกทั้งหมดในฟอร์ม แก้คำที่แสดงได้ แต่แก้เฉพาะค่าตัวหลัง (ป้าย) ไม่แตะค่าตัวแรก (รหัสที่เก็บในฐานข้อมูล)
+- schema ฐานข้อมูล + สคริปต์ย้ายข้อมูลเก่าอยู่นอก repo ที่ `S:\Claudy\web\dis-record-mockup\supabase-schema.sql` และ `S:\Claudy\web\dis-record\tools\` (มีข้อความคำถามจริง ห้าม commit เข้า repo นี้)
+- Supabase ต้อง **ปิด "Allow new users to sign up"** ไว้เสมอ ไม่งั้นใครก็สมัครแล้วเห็นข้อมูลได้
+
 ## วิธีเพิ่มข่าว (Newsletter)
 
 ข่าวทุกชิ้นอยู่ใน `data/news.json` — หน้าแรกโชว์ 6 ชิ้นล่าสุดแบบย่อ, หน้า `news.html` โชว์ทั้งหมดแบบเต็ม + ตัวกรองหมวด

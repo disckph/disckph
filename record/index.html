@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>DIS Record | งานเภสัชสนเทศ</title>
+  <meta name="robots" content="noindex">
+  <script>
+    (function () { try { var t = localStorage.getItem("dis-theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {} })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/app.css?v=2">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="nav-pill">
+    <div class="brand">
+      <span class="logo-badge">DIS</span>
+      <span class="brand-text">ระบบบันทึกเภสัชสนเทศ<span class="brand-sub">DIS Record &amp; Quality</span></span>
+    </div>
+    <nav class="tabs" role="tablist" aria-label="หน้าจอ" id="tabs" hidden>
+      <button class="tab" role="tab" data-view="dashboard">ภาพรวม</button>
+      <button class="tab" role="tab" data-view="record">บันทึกคำถาม</button>
+      <button class="tab" role="tab" data-view="inbox">คำขอจากเว็บ</button>
+      <button class="tab" role="tab" data-view="log">ทะเบียนคำถาม</button>
+      <button class="tab soon" type="button" disabled>ตรวจคุณภาพ</button>
+      <button class="tab soon" type="button" disabled>ความพึงพอใจ</button>
+      <button class="tab soon" type="button" disabled>องค์ความรู้ &amp; PTC</button>
+    </nav>
+    <span class="user-chip" id="userChip" hidden><span id="userName"></span><button class="btn btn-ghost btn-sm" id="btnLogout" type="button">ออก</button></span>
+    <button class="theme-toggle" id="themeToggle" aria-label="สลับโหมดมืด/สว่าง" type="button">
+      <svg viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+    </button>
+  </div>
+</header>
+
+<main class="wrap">
+
+<!-- ================= LOGIN ================= -->
+<section class="view" id="v-login" hidden>
+  <div class="login-wrap">
+    <form class="card login-card" id="loginForm">
+      <div><div class="eyebrow">สำหรับเภสัชกร</div><h1 style="font-size:1.4rem">เข้าสู่ระบบ</h1></div>
+      <div class="field"><label for="lg-email">อีเมล</label><input type="text" id="lg-email" autocomplete="username" inputmode="email"></div>
+      <div class="field"><label for="lg-pass">รหัสผ่าน</label><input type="password" id="lg-pass" autocomplete="current-password" style="width:100%;border:1px solid var(--color-border);background:var(--color-bg);border-radius:var(--radius-sm);padding:9px 12px"></div>
+      <div class="err" id="lg-err" hidden></div>
+      <button class="btn btn-primary" type="submit" style="justify-content:center">เข้าสู่ระบบ</button>
+      <p class="hint">บุคลากรที่ต้องการถามคำถาม ใช้หน้า <a href="ask.html">ส่งคำถามถึงงานเภสัชสนเทศ</a></p>
+    </form>
+  </div>
+</section>
+
+<!-- ================= SETUP PROFILE ================= -->
+<section class="view" id="v-profile" hidden>
+  <div class="login-wrap">
+    <form class="card login-card" id="profileForm">
+      <div><div class="eyebrow">ครั้งแรก</div><h1 style="font-size:1.4rem">ตั้งชื่อผู้ใช้</h1><p class="sub">ใช้แสดงเป็นผู้รับคำถามในแบบบันทึก</p></div>
+      <div class="field"><label for="pf-init">อักษรย่อ</label><input type="text" id="pf-init" placeholder="เช่น สป."></div>
+      <div class="field"><label for="pf-name">ชื่อ-สกุล</label><input type="text" id="pf-name"></div>
+      <div class="err" id="pf-err" hidden></div>
+      <button class="btn btn-primary" type="submit" style="justify-content:center">บันทึก</button>
+    </form>
+  </div>
+</section>
+
+<!-- ================= DASHBOARD ================= -->
+<section class="view" id="v-dashboard" hidden>
+  <div class="view-head">
+    <div>
+      <div class="eyebrow">DIS Quality Dashboard</div>
+      <h1>ภาพรวมงานเภสัชสนเทศ</h1>
+      <p>ตัวชี้วัดคำนวณจากแบบบันทึกที่ไม่ใช่ร่าง แสดงแบบรายเดือน</p>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <select aria-label="ปีงบประมาณ" id="fySel" style="width:auto"></select>
+      <button class="btn btn-primary" type="button" data-new>+ บันทึกคำถามใหม่</button>
+    </div>
+  </div>
+  <div class="grid g-4" id="kpiTiles"></div>
+  <div class="grid g-wide" style="margin-top:16px">
+    <div class="card">
+      <div class="card-head">
+        <div><h2>จำนวนคำถามและร้อยละคำถามเร่งด่วนที่ตอบภายใน 10 นาที</h2><p class="sub">ตัวชี้วัดข้อ 7 และข้อ 8 · รายเดือน</p></div>
+        <div class="legend"><span><i style="background:var(--color-primary-light);height:10px"></i>จำนวนคำถาม</span><span><i style="background:var(--color-primary)"></i>% เร่งด่วนทันเวลา</span><span><i style="background:var(--color-gold)"></i>เป้า 80%</span></div>
+      </div>
+      <div style="overflow-x:auto"><svg class="chart" id="monthChart" viewBox="0 0 640 250" role="img" aria-label="กราฟรายเดือน"></svg></div>
+    </div>
+    <div class="card">
+      <div class="card-head"><div><h2>รอดำเนินการ</h2><p class="sub">ร่าง · ติดตามผล · คำขอใหม่จากเว็บ</p></div><span class="pill p-warn" id="queueCount">0</span></div>
+      <ul class="queue" id="queueList"></ul>
+    </div>
+  </div>
+  <div class="grid g-3" style="margin-top:16px">
+    <div class="card"><div class="card-head"><div><h2>หมวดคำถามหลัก</h2></div></div><div class="hbar" id="catBars"></div></div>
+    <div class="card"><div class="card-head"><div><h2>ผู้ถามและหน่วยงาน</h2></div></div><div class="hbar" id="reqBars"></div><hr style="border:0;border-top:1px solid var(--color-border);margin:14px 0"><div class="hbar" id="deptBars"></div></div>
+    <div class="card"><div class="card-head"><div><h2>ตัวชี้วัดอื่น</h2><p class="sub">ปีงบที่เลือก</p></div></div><dl class="kv" id="otherKpi"></dl></div>
+  </div>
+</section>
+
+<!-- ================= RECORD FORM ================= -->
+<section class="view" id="v-record" hidden>
+  <div class="view-head">
+    <div>
+      <div class="eyebrow">แบบบันทึกการให้บริการข้อมูลยา</div>
+      <h1>บันทึกคำถาม <span class="mono" style="color:var(--color-text-muted)" id="recCode">ใหม่</span></h1>
+      <p id="recFrom">กรอกตามลำดับที่ทำงานจริง: รับคำถาม → สืบค้น → ตอบ → ติดตามผล</p>
+    </div>
+    <span class="pill p-muted" id="recStatus">ยังไม่บันทึก</span>
+  </div>
+
+  <form class="grid g-main" id="disForm" novalidate>
+    <div class="grid" style="gap:16px">
+      <fieldset class="card form-sec">
+        <div class="sec-title"><h2>1. ผู้ถามและการรับคำถาม</h2></div>
+        <div class="row">
+          <div class="field"><label for="f-recv" class="req">วันที่/เวลาที่รับคำถาม</label><input type="datetime-local" id="f-recv"></div>
+          <div class="field"><label for="f-pharm">เภสัชกรผู้รับคำถาม</label><select id="f-pharm"></select></div>
+          <div class="field"><label for="f-name">ชื่อผู้ถาม</label><input type="text" id="f-name" placeholder="ไม่บังคับ"></div>
+        </div>
+        <div class="field"><span class="lbl req">ประเภทผู้ถาม</span><div class="choices" id="c-req"></div></div>
+        <div class="row">
+          <div class="field"><label for="f-dept" class="req">หน่วยงาน/หอผู้ป่วยของผู้ถาม</label><input type="text" id="f-dept" list="deptList"><datalist id="deptList"></datalist></div>
+          <div class="field"><span class="lbl req">วิธีถาม</span><div class="choices" id="c-chan"></div></div>
+        </div>
+        <div class="field"><span class="lbl req">จุดประสงค์ของการถาม</span><div class="choices" id="c-purp"></div></div>
+        <div class="field"><span class="lbl req">ความรีบด่วน</span><div class="choices" id="c-urg"></div>
+          <span class="hint">คำถามเร่งด่วน = ต้องการใช้ข้อมูลทันที มาตรฐานของหน่วยภายใน 10 นาที</span></div>
+      </fieldset>
+
+      <fieldset class="card form-sec">
+        <div class="sec-title"><h2>2. คำถาม</h2></div>
+        <div class="field"><label for="f-q" class="req">คำถาม</label><textarea id="f-q"></textarea></div>
+        <div class="row">
+          <div class="field"><span class="lbl req">ชื่อยา (generic name)</span>
+            <div class="tagbox" id="drugBox"><input type="text" placeholder="พิมพ์ชื่อยาแล้วกด Enter" aria-label="เพิ่มชื่อยา"></div></div>
+          <div class="field"><label for="f-kw">คำค้น (คั่นด้วย ,)</label><input type="text" id="f-kw"></div>
+        </div>
+        <div class="row">
+          <div class="field"><label for="f-cat" class="req">ประเภทคำถาม (หมวดหลัก)</label><select id="f-cat"></select></div>
+          <div class="field"><label for="f-cat2">หมวดรอง (ถ้ามี)</label><select id="f-cat2"></select></div>
+        </div>
+      </fieldset>
+
+      <fieldset class="card form-sec" id="patientSec">
+        <div class="sec-title"><h2>3. ข้อมูลผู้ป่วย</h2><span class="ref">แสดงเมื่อจุดประสงค์ = เพื่อแก้ปัญหาผู้ป่วย · ไม่เก็บชื่อผู้ป่วย</span></div>
+        <div class="patient-box">
+          <div class="row">
+            <div class="field"><label for="f-sex">เพศ</label><select id="f-sex"><option value=""></option><option>ชาย</option><option>หญิง</option></select></div>
+            <div class="field"><label for="f-age">อายุ (ปี)</label><input type="number" id="f-age"></div>
+            <div class="field"><label for="f-wt">น้ำหนัก (กก.)</label><input type="number" id="f-wt" step="0.1"></div>
+            <div class="field"><label for="f-ht">ส่วนสูง (ซม.)</label><input type="number" id="f-ht"></div>
+          </div>
+          <div class="row">
+            <div class="field"><label for="f-scr">SCr (mg/dL)</label><input type="number" id="f-scr" step="0.01"><span class="hint">CrCl (Cockcroft-Gault): <b class="num" id="crcl">—</b> mL/min</span></div>
+            <div class="field"><label for="f-hn">HN</label><input type="text" id="f-hn" placeholder="ใส่เมื่อต้องติดตามผล"></div>
+          </div>
+          <div class="field"><label for="f-pt">ข้อมูลอื่นๆ</label><input type="text" id="f-pt"></div>
+        </div>
+      </fieldset>
+
+      <fieldset class="card form-sec">
+        <div class="sec-title"><h2>4. การสืบค้นข้อมูลและเอกสารอ้างอิง</h2></div>
+        <div class="field"><span class="lbl req">ประเภทแหล่งข้อมูล (เลือกได้มากกว่า 1)</span><div class="choices" id="c-srcType"></div></div>
+        <div class="field"><span class="lbl req">ชื่อเอกสารอ้างอิงที่ใช้ตอบ</span>
+          <div class="tagbox" id="refBox"><input type="text" placeholder="เลือกหรือพิมพ์แล้วกด Enter" aria-label="เพิ่มเอกสารอ้างอิง" list="refList"></div>
+          <datalist id="refList"><option>Lexicomp</option><option>Micromedex</option><option>UpToDate</option><option>Handbook on Injectable Drugs (Trissel's)</option><option>AHFS Drug Information</option><option>Briggs Drugs in Pregnancy and Lactation</option><option>Martindale</option><option>เอกสารกำกับยา (package insert)</option><option>ฐานข้อมูล DIS รพ.เจริญกรุงประชารักษ์</option></datalist></div>
+        <div class="field"><label for="f-notfound">เอกสารที่สืบค้นแต่ไม่พบคำตอบ</label><input type="text" id="f-notfound" placeholder="ไม่บังคับ"></div>
+      </fieldset>
+
+      <fieldset class="card form-sec">
+        <div class="sec-title"><h2>5. คำตอบ</h2></div>
+        <div class="field"><label for="f-ans" class="req">คำตอบและข้อแนะนำของเภสัชกร</label><textarea id="f-ans"></textarea></div>
+        <div class="row">
+          <div class="field"><span class="lbl req">วิธีส่งคำตอบ</span><div class="choices" id="c-ansCh"></div></div>
+          <div class="field"><label for="f-done" class="req">วันที่/เวลาที่ตอบกลับ</label>
+            <div style="display:flex;gap:6px"><input type="datetime-local" id="f-done"><button type="button" class="btn btn-ghost btn-sm" id="btnNow">ตอนนี้</button></div></div>
+        </div>
+        <div class="calc" id="calcBox"></div>
+      </fieldset>
+
+      <fieldset class="card form-sec">
+        <div class="sec-title"><h2>6. ผลลัพธ์ การติดตาม และความพึงพอใจ</h2></div>
+        <div class="field"><span class="lbl req">ผลต่อผู้ถาม</span><div class="choices" id="c-outcome"></div></div>
+        <div class="field"><span class="lbl">การนำไปใช้ประโยชน์</span><div class="choices" id="c-use"></div></div>
+        <div class="row">
+          <div class="field"><span class="lbl">ต้องติดตามผลหรือไม่</span><div class="choices"><label class="choice"><input type="radio" name="fu" id="fuNo" checked><span>ไม่ต้อง</span></label><label class="choice"><input type="radio" name="fu" id="fuYes"><span>ต้องติดตาม</span></label></div></div>
+          <div class="field"><label for="f-fudate">วันนัดติดตาม</label><input type="date" id="f-fudate" disabled></div>
+        </div>
+        <div class="field"><label for="f-furesult">ผลการติดตาม</label><input type="text" id="f-furesult" disabled></div>
+        <div class="field"><span class="lbl">ความพึงพอใจ <span class="hint">(โทรมา = ถามด้วยวาจาก่อนวางสาย)</span></span><div class="choices" id="c-sat"></div></div>
+        <label class="choice"><input type="checkbox" id="f-faq"><span>เสนอคำถามนี้เข้าคลัง FAQ</span></label>
+      </fieldset>
+    </div>
+
+    <aside class="rail">
+      <div class="card timer-wrap">
+        <div class="eyebrow">เวลานับจากรับคำถาม</div>
+        <div class="timer" id="timer">00:00</div>
+        <div class="meter" aria-hidden="true"><span id="timerBar" style="width:0%"></span><i style="left:100%"></i></div>
+        <div class="tile-foot"><span>เป้าคำถามเร่งด่วน 10 นาที</span><span class="pill p-muted" id="timerPill">—</span></div>
+      </div>
+      <div class="card">
+        <div style="display:flex;gap:14px;align-items:center;margin-bottom:12px">
+          <div class="ring" id="ring"><b id="ringTxt">0%</b></div>
+          <div><h2 style="font-size:1rem">ความครบถ้วนของแบบบันทึก</h2><p class="sub">ครบทุกข้อจึงปิดคำถามได้</p></div>
+        </div>
+        <ul class="checklist" id="checklist"></ul>
+      </div>
+      <div class="err" id="recErr" hidden></div>
+      <div style="display:grid;gap:8px">
+        <button type="submit" class="btn btn-primary" style="justify-content:center" id="btnClose">บันทึกและปิดคำถาม</button>
+        <button type="button" class="btn btn-ghost" style="justify-content:center" id="btnDraft">บันทึกร่าง (ยังไม่ตอบ)</button>
+        <button type="button" class="btn btn-ghost" style="justify-content:center" id="btnFollow">บันทึก · รอติดตามผล</button>
+      </div>
+    </aside>
+  </form>
+</section>
+
+<!-- ================= INBOX ================= -->
+<section class="view" id="v-inbox" hidden>
+  <div class="view-head">
+    <div><div class="eyebrow">คำขอที่ส่งผ่านหน้า "ส่งคำถาม"</div><h1>คำขอจากเว็บ</h1>
+      <p>กด "รับเรื่อง" แล้วข้อมูลผู้ถามและคำถามจะเติมลงแบบบันทึกให้ ลิงก์หน้าส่งคำถามสำหรับบุคลากร: <a href="ask.html" target="_blank" rel="noopener">ask.html</a></p></div>
+    <select id="inboxStatus" aria-label="สถานะ" style="width:auto"><option value="open">ยังไม่ปิด</option><option value="all">ทั้งหมด</option></select>
+  </div>
+  <div class="card"><ul class="queue" id="inboxList"></ul></div>
+</section>
+
+<!-- ================= LOG ================= -->
+<section class="view" id="v-log" hidden>
+  <div class="view-head">
+    <div><div class="eyebrow">ระบบจัดเก็บข้อมูล</div><h1>ทะเบียนคำถาม</h1>
+      <p>ค้นได้จากเลขที่ ชื่อยา คำถาม หรือคำตอบ คลิกแถวเพื่อเปิดแก้ไข เวลาตอบสีแดง = คำถามเร่งด่วนที่เกิน 10 นาที</p></div>
+    <button class="btn btn-ghost" type="button" id="btnExport">ส่งออก Excel (CSV)</button>
+  </div>
+  <div class="card">
+    <div class="filters">
+      <input type="text" id="logSearch" placeholder="ค้นชื่อยา / คำถาม / เลขที่" aria-label="ค้นหา">
+      <select id="logFy" aria-label="ปีงบ"></select>
+      <select id="logStatus" aria-label="สถานะ"><option value="">ทุกสถานะ</option><option value="draft">ร่าง</option><option value="followup">ติดตามผล</option><option value="closed">ปิดแล้ว</option></select>
+      <select aria-label="ความรีบด่วน" id="logUrg"><option value="">ทุกความรีบด่วน</option><option value="immediate_10min">ทันที</option><option value="within_1day">ภายใน 1 วัน</option></select>
+      <span class="hint" id="logCount"></span>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>เลขที่</th><th>รับคำถาม</th><th>ผู้ถาม / หน่วยงาน</th><th>ยา</th><th>หมวดหลัก</th><th>รีบด่วน</th><th class="r">เวลาตอบ</th><th>ผลลัพธ์</th><th>สถานะ</th></tr></thead>
+        <tbody id="logBody"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer><div class="wrap">งานเภสัชสนเทศ กลุ่มงานเภสัชกรรม โรงพยาบาลเจริญกรุงประชารักษ์ สำนักการแพทย์ กรุงเทพมหานคร</div></footer>
+<div class="toast" id="toast" hidden></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="js/config.js?v=1"></script>
+<script src="js/lookups.js?v=1"></script>
+<script src="js/app.js?v=2"></script>
+</body>
+</html>

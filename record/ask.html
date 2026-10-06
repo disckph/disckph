@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>ส่งคำถามถึงงานเภสัชสนเทศ | รพ.เจริญกรุงประชารักษ์</title>
+  <script>
+    (function () { try { var t = localStorage.getItem("dis-theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {} })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/app.css?v=2">
+</head>
+<body>
+<header class="site-header">
+  <div class="nav-pill">
+    <div class="brand"><span class="logo-badge">DIS</span><span>งานเภสัชสนเทศ<span class="brand-sub">โรงพยาบาลเจริญกรุงประชารักษ์</span></span></div>
+  </div>
+</header>
+
+<main class="wrap" style="max-width:640px">
+  <div class="view-head" style="margin-top:24px">
+    <div><div class="eyebrow">Drug Information Service</div><h1>ส่งคำถามถึงงานเภสัชสนเทศ</h1>
+      <p>ถามข้อมูลยา ขอเอกสาร/drug monograph หรือขอให้ทำสื่อ เภสัชกรจะติดต่อกลับตามช่องทางที่ระบุ</p></div>
+  </div>
+
+  <form class="card form-sec" id="askForm" novalidate>
+    <div class="notice">เรื่องด่วนที่ต้องการคำตอบภายใน 10 นาที กรุณาโทร 7831 งาน DIS (ในเวลาราชการ) หรือห้องยา (นอกเวลาราชการ) โดยตรง</div>
+    <div class="field"><span class="lbl req">ต้องการ</span><div class="choices">
+      <label class="choice"><input type="radio" name="rq-type" value="question" checked><span>ถามข้อมูลยา</span></label>
+      <label class="choice"><input type="radio" name="rq-type" value="document"><span>ขอเอกสาร/monograph</span></label>
+      <label class="choice"><input type="radio" name="rq-type" value="media_training"><span>ขอทำสื่อ/อบรม</span></label></div></div>
+    <div class="row">
+      <div class="field"><label for="rq-name" class="req">ชื่อ-ตำแหน่ง</label><input type="text" id="rq-name" placeholder="เช่น พว.สมใจ (พยาบาล)"></div>
+      <div class="field"><label for="rq-dept" class="req">หน่วยงาน</label><input type="text" id="rq-dept" list="deptList"><datalist id="deptList"></datalist></div>
+    </div>
+    <div class="field"><label for="rq-q" class="req">คำถาม/รายละเอียด</label><textarea id="rq-q" placeholder="ระบุชื่อยา และข้อมูลผู้ป่วยที่เกี่ยวข้อง (อายุ น้ำหนัก การทำงานของไต) โดยไม่ต้องใส่ชื่อผู้ป่วย"></textarea></div>
+    <div class="row">
+      <div class="field" id="whenField"><label for="rq-when">ต้องการคำตอบภายใน</label><select id="rq-when"><option value="today">วันนี้</option><option value="3days" selected>ภายใน 3 วัน</option><option value="no_rush">ไม่รีบ</option></select></div>
+      <div class="field"><label for="rq-back">ให้ตอบกลับทาง</label><select id="rq-back"><option value="line">LINE</option><option value="phone">โทรกลับ</option><option value="email">e-mail</option></select></div>
+    </div>
+    <div class="field"><label for="rq-contact" class="req">เบอร์ภายใน / LINE ID / e-mail</label><input type="text" id="rq-contact"></div>
+    <div class="err" id="rq-err" hidden></div>
+    <button type="submit" class="btn btn-primary" style="justify-content:center">ส่งคำถาม</button>
+  </form>
+
+  <div class="card" id="done" hidden style="text-align:center">
+    <h2>ส่งคำถามแล้ว</h2>
+    <p class="sub">เภสัชกรจะติดต่อกลับตามช่องทางที่ระบุไว้ ขอบคุณครับ</p>
+    <button type="button" class="btn btn-ghost" style="margin-top:12px" onclick="location.reload()">ส่งคำถามอื่น</button>
+  </div>
+</main>
+<footer><div class="wrap">งานเภสัชสนเทศ กลุ่มงานเภสัชกรรม โรงพยาบาลเจริญกรุงประชารักษ์ สำนักการแพทย์ กรุงเทพมหานคร</div></footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="js/config.js?v=1"></script>
+<script>
+(function () {
+  var C = window.DIS_CONFIG, sb = window.supabase.createClient(C.SUPABASE_URL, C.SUPABASE_ANON_KEY);
+  var $ = function (id) { return document.getElementById(id); };
+  // ช่อง "ต้องการคำตอบภายใน" แสดงเฉพาะเมื่อถามข้อมูลยา งานเอกสาร/สื่อ/อบรมไม่ผูกกำหนดเวลา
+  function isQuestion() { return document.querySelector('input[name="rq-type"]:checked').value === "question"; }
+  document.querySelectorAll('input[name="rq-type"]').forEach(function (i) { i.addEventListener("change", function () { $("whenField").hidden = !isQuestion(); }); });
+  sb.from("departments").select("name").order("name").then(function (r) {
+    $("deptList").innerHTML = (r.data || []).map(function (d) { return "<option>" + d.name.replace(/</g, "&lt;") + "</option>"; }).join("");
+  });
+  $("askForm").addEventListener("submit", async function (e) {
+    e.preventDefault(); $("rq-err").hidden = true;
+    var row = {
+      request_type: document.querySelector('input[name="rq-type"]:checked').value,
+      requester_name: $("rq-name").value.trim(), department: $("rq-dept").value.trim(),
+      question: $("rq-q").value.trim(), wanted_by: isQuestion() ? $("rq-when").value : null, reply_channel: $("rq-back").value,
+      contact: $("rq-contact").value.trim()
+    };
+    if (!row.requester_name || !row.department || !row.question || !row.contact) {
+      $("rq-err").textContent = "กรุณากรอกช่องที่มีเครื่องหมาย * ให้ครบ"; $("rq-err").hidden = false; return;
+    }
+    var r = await sb.from("dis_requests").insert(row);   // ไม่ select กลับ เพราะคนทั่วไปอ่านตารางนี้ไม่ได้
+    if (r.error) { $("rq-err").textContent = "ส่งไม่สำเร็จ ลองอีกครั้ง หรือโทรหาห้องยา (" + r.error.message + ")"; $("rq-err").hidden = false; return; }
+    $("askForm").hidden = true; $("done").hidden = false;
+  });
+})();
+</script>
+</body>
+</html>

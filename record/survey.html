@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>แบบประเมินบริการเภสัชสนเทศ | รพ.เจริญกรุงประชารักษ์</title>
+  <script>
+    (function () { try { var t = localStorage.getItem("dis-theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {} })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/app.css?v=2">
+</head>
+<body>
+<header class="site-header">
+  <div class="nav-pill"><div class="brand"><span class="logo-badge">DIS</span><span>งานเภสัชสนเทศ<span class="brand-sub">โรงพยาบาลเจริญกรุงประชารักษ์</span></span></div></div>
+</header>
+<main class="wrap" style="max-width:520px">
+  <div class="view-head" style="margin-top:24px"><div><div class="eyebrow">ใช้เวลาไม่ถึง 30 วินาที</div><h1>ช่วยประเมินคำตอบที่ได้รับ</h1></div></div>
+  <form class="card form-sec" id="svForm" novalidate>
+    <div id="items"></div>
+    <div class="field"><span class="lbl">ความพึงพอใจโดยรวม (1-5)</span><div class="choices" id="overall"></div></div>
+    <div class="field"><label for="sv-comment">ข้อเสนอแนะ</label><textarea id="sv-comment" style="min-height:64px" placeholder="ไม่บังคับ"></textarea></div>
+    <div class="err" id="sv-err" hidden></div>
+    <button type="submit" class="btn btn-primary" style="justify-content:center">ส่งแบบประเมิน</button>
+  </form>
+  <div class="card" id="done" hidden style="text-align:center"><h2>ขอบคุณครับ</h2><p class="sub">ความเห็นของท่านช่วยพัฒนางานเภสัชสนเทศ</p></div>
+</main>
+<footer><div class="wrap">งานเภสัชสนเทศ กลุ่มงานเภสัชกรรม โรงพยาบาลเจริญกรุงประชารักษ์</div></footer>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="js/config.js?v=1"></script>
+<script>
+(function () {
+  var C = window.DIS_CONFIG, sb = window.supabase.createClient(C.SUPABASE_URL, C.SUPABASE_ANON_KEY);
+  var $ = function (id) { return document.getElementById(id); };
+  var p = new URLSearchParams(location.search), req = +p.get("r"), tok = p.get("t");
+  // 5 ข้อตาม "การประเมินความพึงพอใจของผู้รับบริการ" ภาคผนวก จ
+  var Q = [["complete","คำตอบครบถ้วน"],["clear","คำตอบชัดเจน"],["relevant","ตรงกับที่ต้องการ"],["useful","นำไปใช้ประโยชน์ได้"],["timely","ทันเวลาที่ต้องการ"]];
+  $("items").innerHTML = Q.map(function (q) {
+    return '<div class="yn"><span>' + q[1] + '</span><div class="choices"><label class="choice"><input type="radio" name="' + q[0] + '" value="1"><span>ใช่</span></label><label class="choice"><input type="radio" name="' + q[0] + '" value="0"><span>ไม่</span></label></div></div>';
+  }).join("");
+  $("overall").innerHTML = [1,2,3,4,5].map(function (n) { return '<label class="choice"><input type="radio" name="overall" value="' + n + '"><span>' + n + "</span></label>"; }).join("");
+  if (!req || !tok) { $("svForm").hidden = true; $("done").hidden = false; $("done").innerHTML = "<h2>ลิงก์ไม่ครบ</h2><p class='sub'>กรุณาใช้ลิงก์ที่เภสัชกรส่งให้</p>"; return; }
+  function val(n) { var el = document.querySelector('input[name="' + n + '"]:checked'); return el ? el.value : null; }
+  $("svForm").addEventListener("submit", async function (e) {
+    e.preventDefault(); $("sv-err").hidden = true;
+    var row = { source: "online", request_id: req, survey_token: tok, comment: $("sv-comment").value.trim() || null, overall: val("overall") ? +val("overall") : null };
+    var miss = false;
+    Q.forEach(function (q) { var v = val(q[0]); if (v === null) miss = true; row[q[0]] = v === "1"; });
+    if (miss) { $("sv-err").textContent = "กรุณาตอบให้ครบ 5 ข้อ"; $("sv-err").hidden = false; return; }
+    var r = await sb.from("survey_responses").insert(row);
+    if (r.error) { $("sv-err").textContent = "ส่งไม่สำเร็จ ลิงก์อาจหมดอายุหรือไม่ถูกต้อง"; $("sv-err").hidden = false; return; }
+    $("svForm").hidden = true; $("done").hidden = false;
+  });
+})();
+</script>
+</body>
+</html>
