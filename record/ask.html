@@ -26,7 +26,7 @@
   </div>
 
   <form class="card form-sec" id="askForm" novalidate>
-    <div class="notice">เรื่องด่วนที่ต้องการคำตอบภายใน 10 นาที กรุณาโทร 7831 งาน DIS (ในเวลาราชการ) หรือห้องยา (นอกเวลาราชการ) โดยตรง</div>
+    <div class="notice">เรื่องด่วนที่ต้องการคำตอบภายใน 10 นาที กรุณาโทร 7831 (DIS) ในเวลาราชการ หรือห้องจ่ายยา นอกเวลาราชการ</div>
     <div class="field"><span class="lbl req">ต้องการ</span><div class="choices">
       <label class="choice"><input type="radio" name="rq-type" value="question" checked><span>ถามข้อมูลยา</span></label>
       <label class="choice"><input type="radio" name="rq-type" value="document"><span>ขอเอกสาร/monograph</span></label>
@@ -77,7 +77,7 @@
       $("rq-err").textContent = "กรุณากรอกช่องที่มีเครื่องหมาย * ให้ครบ"; $("rq-err").hidden = false; return;
     }
     var r = await sb.from("dis_requests").insert(row);   // ไม่ select กลับ เพราะคนทั่วไปอ่านตารางนี้ไม่ได้
-    if (r.error) { $("rq-err").textContent = "ส่งไม่สำเร็จ ลองอีกครั้ง หรือโทรหาห้องยา (" + r.error.message + ")"; $("rq-err").hidden = false; return; }
+    if (r.error) { $("rq-err").textContent = "ส่งไม่สำเร็จ ลองอีกครั้ง หรือโทร 7831 (DIS) ในเวลาราชการ / ห้องจ่ายยา นอกเวลาราชการ (" + r.error.message + ")"; $("rq-err").hidden = false; return; }
     $("askForm").hidden = true; $("done").hidden = false;
   });
 })();
