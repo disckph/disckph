@@ -214,7 +214,7 @@
     setChoice("urg", pre.urgency || null);
     if (pre.answer_channel) setChoice("ansCh", pre.answer_channel);
     $("recCode").textContent = "ใหม่";
-    $("recFrom").textContent = pre.request_code ? "รับเรื่องจากคำขอเว็บ " + pre.request_code : "กรอกตามลำดับที่ทำงานจริง: รับคำถาม → สืบค้น → ตอบ → ติดตามผล";
+    $("recFrom").textContent = pre.request_code ? "รับเรื่องจากคำขอเว็บไซต์ " + pre.request_code : "กรอกตามลำดับที่ทำงานจริง: รับคำถาม → สืบค้น → ตอบ → ติดตามผล";
     setStatusPill(null); update();
   }
 
@@ -238,7 +238,7 @@
     $(q.followup_needed ? "fuYes" : "fuNo").checked = true;
     $("f-fudate").value = q.followup_date || ""; $("f-furesult").value = q.followup_result || "";
     setChoice("sat", q.satisfaction_verbal); $("f-faq").checked = !!q.faq_candidate;
-    $("recCode").textContent = q.code; $("recFrom").textContent = "รับเมื่อ " + thDate(q.received_at) + (q.request_id ? " · มาจากคำขอเว็บ" : "");
+    $("recCode").textContent = q.code; $("recFrom").textContent = "รับเมื่อ " + thDate(q.received_at) + (q.request_id ? " · มาจากคำขอเว็บไซต์" : "");
     setStatusPill(q.status); update(); show("record");
   }
 
@@ -382,7 +382,7 @@
     var reqs = rq.data || [];
     $("queueCount").textContent = (pend.length + reqs.length) + " รายการ";
     var html = reqs.map(function (x) {
-      return '<li><span class="pill p-bad">คำขอเว็บ</span><div><div class="q-title">' + esc(x.question) + '</div><div class="q-meta"><span class="mono">' + esc(x.code) + "</span> · " + esc(x.requester_name) + " · " + esc(x.department) + '</div></div><button type="button" class="btn btn-ghost btn-sm" data-req="' + x.id + '">รับเรื่อง</button></li>';
+      return '<li><span class="pill p-bad">คำขอเว็บไซต์</span><div><div class="q-title">' + esc(x.question) + '</div><div class="q-meta"><span class="mono">' + esc(x.code) + "</span> · " + esc(x.requester_name) + " · " + esc(x.department) + '</div></div><button type="button" class="btn btn-ghost btn-sm" data-req="' + x.id + '">รับเรื่อง</button></li>';
     }).join("") + pend.map(function (q) {
       var s = LK.status[q.status];
       return '<li><span class="pill ' + s[1] + '">' + s[0] + '</span><div><div class="q-title">' + esc(q.question) + '</div><div class="q-meta"><span class="mono">' + esc(q.code) + "</span> · " + thDate(q.received_at) + (q.followup_date ? " · นัดติดตาม " + q.followup_date : "") + '</div></div><button type="button" class="btn btn-ghost btn-sm" data-open="' + q.id + '">เปิด</button></li>';

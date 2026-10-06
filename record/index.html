@@ -24,7 +24,7 @@
     <nav class="tabs" role="tablist" aria-label="หน้าจอ" id="tabs" hidden>
       <button class="tab" role="tab" data-view="dashboard">ภาพรวม</button>
       <button class="tab" role="tab" data-view="record">บันทึกคำถาม</button>
-      <button class="tab" role="tab" data-view="inbox">คำขอจากเว็บ</button>
+      <button class="tab" role="tab" data-view="inbox">คำขอจากเว็บไซต์</button>
       <button class="tab" role="tab" data-view="log">ทะเบียนคำถาม</button>
       <button class="tab soon" type="button" disabled>ตรวจคุณภาพ</button>
       <button class="tab soon" type="button" disabled>ความพึงพอใจ</button>
@@ -89,7 +89,7 @@
       <div style="overflow-x:auto"><svg class="chart" id="monthChart" viewBox="0 0 640 250" role="img" aria-label="กราฟรายเดือน"></svg></div>
     </div>
     <div class="card">
-      <div class="card-head"><div><h2>รอดำเนินการ</h2><p class="sub">ร่าง · ติดตามผล · คำขอใหม่จากเว็บ</p></div><span class="pill p-warn" id="queueCount">0</span></div>
+      <div class="card-head"><div><h2>รอดำเนินการ</h2><p class="sub">ร่าง · ติดตามผล · คำขอใหม่จากเว็บไซต์</p></div><span class="pill p-warn" id="queueCount">0</span></div>
       <ul class="queue" id="queueList"></ul>
     </div>
   </div>
@@ -222,7 +222,7 @@
 <!-- ================= INBOX ================= -->
 <section class="view" id="v-inbox" hidden>
   <div class="view-head">
-    <div><div class="eyebrow">คำขอที่ส่งผ่านหน้า "ส่งคำถาม"</div><h1>คำขอจากเว็บ</h1>
+    <div><div class="eyebrow">คำขอที่ส่งผ่านหน้า "ส่งคำถาม"</div><h1>คำขอจากเว็บไซต์</h1>
       <p>กด "รับเรื่อง" แล้วข้อมูลผู้ถามและคำถามจะเติมลงแบบบันทึกให้ ลิงก์หน้าส่งคำถามสำหรับบุคลากร: <a href="ask.html" target="_blank" rel="noopener">ask.html</a></p></div>
     <select id="inboxStatus" aria-label="สถานะ" style="width:auto"><option value="open">ยังไม่ปิด</option><option value="all">ทั้งหมด</option></select>
   </div>
@@ -260,7 +260,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="js/config.js?v=1"></script>
-<script src="js/lookups.js?v=1"></script>
-<script src="js/app.js?v=3"></script>
+<script src="js/lookups.js?v=2"></script>
+<script src="js/app.js?v=4"></script>
 </body>
 </html>
