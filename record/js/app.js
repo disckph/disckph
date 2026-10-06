@@ -434,8 +434,11 @@
       var wanted = { today: "ต้องการวันนี้", "3days": "ภายใน 3 วัน", no_rush: "ไม่รีบ" }[x.wanted_by] || "";
       var back = { line: "LINE", phone: "โทรกลับ", email: "e-mail" }[x.reply_channel] || "";
       return '<li><span class="pill ' + s[1] + '">' + s[0] + '</span><div><div class="q-title" style="white-space:normal">' + esc(x.question) + '</div><div class="q-meta"><span class="mono">' + esc(x.code) + "</span> · " + esc(LK.reqType[x.request_type] || "") + " · " + esc(x.requester_name) + " · " + esc(x.department) + " · " + wanted + " · ตอบกลับทาง " + back + " " + esc(x.contact || "") + " · ส่งเมื่อ " + thDate(x.created_at) + "</div></div>" +
-        (x.status === "new" ? '<button type="button" class="btn btn-ghost btn-sm" data-req="' + x.id + '">รับเรื่อง</button>'
-          : x.status === "answered" ? '<button type="button" class="btn btn-ghost btn-sm" data-copy="' + esc(surveyUrl(x)) + '">คัดลอกลิงก์แบบประเมิน</button>' : "<span></span>") + "</li>";
+        '<span style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end">' +
+        (x.status === "new" ? '<button type="button" class="btn btn-ghost btn-sm" data-req="' + x.id + '">รับเรื่อง</button>' : "") +
+        (x.status === "answered" ? '<button type="button" class="btn btn-ghost btn-sm" data-copy="' + esc(surveyUrl(x)) + '">คัดลอกลิงก์แบบประเมิน</button>' : "") +
+        (x.status === "new" || x.status === "in_progress" ? '<button type="button" class="btn btn-ghost btn-sm" data-close-req="' + x.id + '" title="ปิดโดยไม่บันทึกเป็นคำถาม เช่น คำขอทดสอบ/ซ้ำ/ส่งผิด">ปิดคำขอ</button>' : "") +
+        "</span></li>";
     }).join("") || '<li class="empty" style="display:block">ยังไม่มีคำขอ</li>';
   }
   function surveyUrl(x) { return new URL("survey.html?r=" + x.id + "&t=" + x.survey_token, location.href).href; }
@@ -445,6 +448,15 @@
     (navigator.clipboard ? navigator.clipboard.writeText(url) : Promise.reject()).then(
       function () { toast("คัดลอกลิงก์แล้ว วางส่งพร้อมคำตอบได้เลย"); },
       function () { window.prompt("คัดลอกลิงก์นี้", url); });
+  });
+  // ปิดคำขอที่ไม่ต้องบันทึกเป็นคำถาม (ทดสอบ/ซ้ำ/ส่งผิด) — เปิดดูย้อนหลังได้ที่ตัวกรอง "ทั้งหมด"
+  document.addEventListener("click", async function (e) {
+    var b = e.target.closest("[data-close-req]"); if (!b) return;
+    if (!window.confirm("ปิดคำขอนี้โดยไม่บันทึกเป็นคำถาม?")) return;
+    var r = await sb.from("dis_requests").update({ status: "closed" }).eq("id", +b.dataset.closeReq);
+    if (r.error) return fail(r.error, "close request");
+    toast("ปิดคำขอแล้ว"); loadInbox();
+    if (!$("v-dashboard").hidden) loadDashboard();
   });
   async function takeRequest(id) {
     var r = await sb.from("dis_requests").select("*").eq("id", id).single();
