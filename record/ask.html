@@ -77,7 +77,7 @@
       $("rq-err").textContent = "กรุณากรอกช่องที่มีเครื่องหมาย * ให้ครบ"; $("rq-err").hidden = false; return;
     }
     var r = await sb.from("dis_requests").insert(row);   // ไม่ select กลับ เพราะคนทั่วไปอ่านตารางนี้ไม่ได้
-    if (r.error) { $("rq-err").textContent = "ส่งไม่สำเร็จ ลองอีกครั้ง หรือโทร 7831 (DIS) ในเวลาราชการ / ห้องจ่ายยา นอกเวลาราชการ (" + r.error.message + ")"; $("rq-err").hidden = false; return; }
+    if (r.error) { console.error(r.error); $("rq-err").textContent = "ส่งไม่สำเร็จ กรุณาลองอีกครั้ง หรือโทร 7831 (DIS) ในเวลาราชการ / ห้องจ่ายยา นอกเวลาราชการ"; $("rq-err").hidden = false; return; }
     $("askForm").hidden = true; $("done").hidden = false;
   });
 })();
