@@ -201,9 +201,52 @@
     $("fuNo").checked = true; $("recErr").hidden = true;
   }
 
+  /* ---------- ตอบกลับผู้ถาม (คำขอจากเว็บไซต์) ---------- */
+  var currentRequest = null;
+  function replyText() {
+    var x = currentRequest || {}, T = LK.replyTemplate;
+    var refs = tags("refBox");
+    var body = "Dear " + (x.requester_name || $("f-name").value || "") + ",\n\n" +
+      "Thank you for reaching out.\n\n" +
+      "Regarding your inquiry about " + ($("f-q").value.trim()) + "\n\n" +
+      ($("f-ans").value.trim() || "[คำตอบ]") + "\n\n" +
+      (refs.length ? "Reference: " + refs.join(", ") + "\n\n" : "") +
+      (x.survey_token ? T.surveyLine + "\n" + surveyUrl(x) + "\n\n" : "") +
+      "Please feel free to reach out if you have any further questions.\n\n" +
+      "Best regards,\n" + T.signature;
+    return { subject: T.subject, body: body };
+  }
+  function refreshReply() {
+    var x = currentRequest, card = $("replyCard");
+    card.hidden = !x;
+    if (!x) return;
+    var email = x.reply_channel === "email" && /@/.test(x.contact || "");
+    var back = { line: "LINE", phone: "โทรกลับ", email: "e-mail" }[x.reply_channel] || "";
+    $("replyTo").textContent = "ตอบกลับทาง " + back + ": " + (x.contact || "-");
+    $("btnGmail").hidden = !email;
+    if (email) {
+      var m = replyText();
+      $("btnGmail").href = "https://mail.google.com/mail/?view=cm&fs=1&to=" + encodeURIComponent(x.contact.trim()) +
+        "&su=" + encodeURIComponent(m.subject) + "&body=" + encodeURIComponent(m.body);
+    }
+  }
+  $("btnCopyReply").addEventListener("click", function () {
+    var t = replyText().body;
+    (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject()).then(
+      function () { toast("คัดลอกข้อความแล้ว วางใน LINE หรืออีเมลได้เลย"); },
+      function () { window.prompt("คัดลอกข้อความนี้", t); });
+  });
+  $("btnGmail").addEventListener("click", function () { refreshReply(); });
+  async function loadRequest(id) {
+    currentRequest = null;
+    if (id) { var r = await sb.from("dis_requests").select("*").eq("id", id).maybeSingle(); currentRequest = r.data || null; }
+    refreshReply();
+  }
+
   function newRecord(pre) {
     pre = pre || {};
     currentId = null; currentRequestId = pre.request_id || null;
+    loadRequest(currentRequestId);
     resetForm();
     $("f-recv").value = toLocalInput(pre.received_at || new Date());
     if (me) $("f-pharm").value = me.id;
@@ -223,6 +266,7 @@
     if (r.error) return fail(r.error, "open");
     var q = r.data, pt = q.patient || {};
     resetForm(); currentId = q.id; currentRequestId = q.request_id;
+    loadRequest(currentRequestId);
     $("f-recv").value = toLocalInput(q.received_at);
     $("f-pharm").value = q.pharmacist_id || "";
     $("f-name").value = q.requester_name || "";

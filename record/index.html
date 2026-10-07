@@ -209,6 +209,15 @@
         </div>
         <ul class="checklist" id="checklist"></ul>
       </div>
+      <div class="card" id="replyCard" hidden>
+        <h2 style="font-size:1rem">ตอบกลับผู้ถาม</h2>
+        <p class="sub" id="replyTo"></p>
+        <div style="display:grid;gap:8px;margin-top:10px">
+          <a class="btn btn-primary" style="justify-content:center" id="btnGmail" href="#" target="_blank" rel="noopener">เปิด Gmail พร้อมข้อความตอบกลับ</a>
+          <button type="button" class="btn btn-ghost" style="justify-content:center" id="btnCopyReply">คัดลอกข้อความตอบกลับ</button>
+        </div>
+        <p class="hint" style="margin-top:8px">ข้อความดึงจากคำตอบ + เอกสารอ้างอิงในแบบบันทึก พร้อมลิงก์แบบประเมิน ตรวจแล้วกดส่งเองใน Gmail</p>
+      </div>
       <div class="err" id="recErr" hidden></div>
       <div style="display:grid;gap:8px">
         <button type="submit" class="btn btn-primary" style="justify-content:center" id="btnClose">บันทึกและปิดคำถาม</button>
@@ -260,7 +269,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="js/config.js?v=1"></script>
-<script src="js/lookups.js?v=2"></script>
-<script src="js/app.js?v=4"></script>
+<script src="js/lookups.js?v=3"></script>
+<script src="js/app.js?v=5"></script>
 </body>
 </html>

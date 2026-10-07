@@ -13,5 +13,11 @@ window.DIS_LOOKUPS = {
   cat: ["Identification","Availability","Pharmacokinetics","Pregnancy/Nursing","Interaction","Formulation","ADR/Side effects","Toxicity/Poisoning","Dosage/Administration","Therapeutic use/Efficacy/Indication","Compatibility/Stability","Herbal/Conventional medicines","Storage","Contraindication/Precaution","Legal/Regulatory/Law","Cost/Pharmacoeconomics","Pharmacology/Mechanism of action","Alternative medicine","Compounding","Others","ทะเบียนยาและเงื่อนไขการสั่งใช้ (รพ.)","สินค้าคงคลัง (รพ.)","Off-label regimen (รพ.)"],
   status: { draft: ["ร่าง", "p-bad"], answered: ["ตอบแล้ว", "p-info"], followup: ["ติดตามผล", "p-info"], qa: ["รอตรวจ QA", "p-gold"], closed: ["ปิดแล้ว", "p-ok"] },
   reqStatus: { new: ["ใหม่", "p-bad"], in_progress: ["กำลังทำ", "p-info"], answered: ["ตอบแล้ว", "p-ok"], closed: ["ปิด", "p-muted"] },
+  // อีเมลตอบกลับคำขอจากเว็บไซต์ (ปุ่ม "เปิด Gmail พร้อมข้อความตอบกลับ") แก้หัวเรื่อง/ลายเซ็นได้ที่นี่
+  replyTemplate: {
+    subject: "Inquiry Response: [DIS ask.html]",
+    surveyLine: "We would appreciate your feedback on this answer (less than 30 seconds):",
+    signature: "S.Upakararat\nDIS, CKP HOSP",
+  },
   reqType: { question: "ถามข้อมูลยา", document: "ขอเอกสาร/monograph", media_training: "บริการสื่อ สารสนเทศ และองค์ความรู้เกี่ยวกับยา" },
 };
