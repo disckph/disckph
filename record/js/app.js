@@ -148,7 +148,7 @@
       [!!($("f-ans").value.trim() && getRadio("ansCh")), "ความครบถ้วนของคำตอบ", "มีคำตอบและวิธีส่งคำตอบ"],
       [!!(getChecks("srcType").length && (tags("refBox").length || getChecks("srcType").indexOf("no_search") > -1)), "เอกสารอ้างอิง", "ประเภทและชื่อเอกสารที่ใช้"],
       [m !== null && m >= 0, "เวลาตอบ", "มีเวลาตอบกลับ คำนวณนาทีได้"],
-      [!!getRadio("outcome"), "ผลลัพธ์", "บันทึกผลต่อผู้ถาม"]
+      [!!getRadio("outcome") || !!currentRequestId, "ผลลัพธ์", currentRequestId && !getRadio("outcome") ? "คำขอเว็บไซต์: รอผลจากแบบประเมินของผู้ถาม (กรอกเองได้เมื่อทราบผล)" : "บันทึกผลต่อผู้ถาม"]
     ];
   }
 
@@ -239,8 +239,21 @@
   $("btnGmail").addEventListener("click", function () { refreshReply(); });
   async function loadRequest(id) {
     currentRequest = null;
-    if (id) { var r = await sb.from("dis_requests").select("*").eq("id", id).maybeSingle(); currentRequest = r.data || null; }
+    var sv = [];
+    if (id) {
+      var r = await sb.from("dis_requests").select("*").eq("id", id).maybeSingle(); currentRequest = r.data || null;
+      var s = await sb.from("survey_responses").select("*").eq("request_id", id).order("created_at", { ascending: false });
+      sv = s.data || [];
+    }
     refreshReply();
+    // ผลแบบประเมินจากผู้ถาม (ใช้ประกอบการกรอก "ผลต่อผู้ถาม" แล้วปิดคำถาม)
+    var box = $("replySurvey");
+    if (!currentRequest) { box.innerHTML = ""; return; }
+    if (!sv.length) { box.innerHTML = '<span class="pill p-muted">ยังไม่ได้รับแบบประเมิน</span>'; return; }
+    var a = sv[0], yn = function (v) { return v ? '<span class="pill p-ok">ใช่</span>' : '<span class="pill p-bad">ไม่</span>'; };
+    box.innerHTML = '<dl class="kv"><dt>ครบถ้วน</dt><dd>' + yn(a.complete) + "</dd><dt>ชัดเจน</dt><dd>" + yn(a.clear) + "</dd><dt>ตรงความต้องการ</dt><dd>" + yn(a.relevant) +
+      "</dd><dt>นำไปใช้ได้</dt><dd>" + yn(a.useful) + "</dd><dt>ทันเวลา</dt><dd>" + yn(a.timely) + "</dd><dt>โดยรวม</dt><dd>" + (a.overall || "—") + "/5</dd></dl>" +
+      (a.comment ? '<p class="hint">"' + esc(a.comment) + '"</p>' : "");
   }
 
   function newRecord(pre) {
@@ -346,12 +359,13 @@
         : await sb.from("dis_questions").insert(row).select("id,code,status").single();
       if (r.error) throw r.error;
       currentId = r.data.id; $("recCode").textContent = r.data.code; setStatusPill(r.data.status);
-      if (currentRequestId) await sb.from("dis_requests").update({ status: status === "closed" ? "answered" : "in_progress" }).eq("id", currentRequestId);
-      toast({ draft: "บันทึกร่าง ", followup: "บันทึกแล้ว รอติดตามผล ", closed: "ปิดคำถาม " }[status] + r.data.code + " แล้ว");
+      if (currentRequestId) await sb.from("dis_requests").update({ status: status === "closed" || status === "answered" ? "answered" : "in_progress" }).eq("id", currentRequestId);
+      toast({ draft: "บันทึกร่าง ", followup: "บันทึกแล้ว รอติดตามผล ", answered: "บันทึกแล้ว ตอบแล้ว รอผลประเมิน ", closed: "ปิดคำถาม " }[status] + r.data.code + " แล้ว");
     } catch (err) { fail(err, "save"); }
     form.classList.remove("loading");
   }
-  form.addEventListener("submit", function (e) { e.preventDefault(); save("closed"); });
+  // คำขอจากเว็บไซต์ที่ยังไม่รู้ผล (ตอบทางอีเมล/LINE) บันทึกเป็น "ตอบแล้ว รอผลประเมิน" ไว้ก่อน ปิดจริงเมื่อได้ผลจากแบบประเมิน
+  form.addEventListener("submit", function (e) { e.preventDefault(); save(currentRequestId && !getRadio("outcome") ? "answered" : "closed"); });
   $("btnDraft").addEventListener("click", function () { save("draft"); });
   $("btnFollow").addEventListener("click", function () { save("followup"); });
 
@@ -421,7 +435,7 @@
       "<dt>ข้อ 3, 4, 5, 9</dt><dd>ตรวจคุณภาพ · แบบประเมินออนไลน์ · PTC · องค์ความรู้ <span class=\"pill p-gold\">ระยะ 2</span></dd>";
 
     // งานค้าง
-    var pend = all.filter(function (q) { return q.status === "draft" || q.status === "followup"; });
+    var pend = all.filter(function (q) { return q.status === "draft" || q.status === "followup" || q.status === "answered"; });
     var rq = await sb.from("dis_requests").select("id,code,requester_name,department,question,created_at").eq("status", "new").order("created_at");
     var reqs = rq.data || [];
     $("queueCount").textContent = (pend.length + reqs.length) + " รายการ";
