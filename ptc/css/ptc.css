@@ -1,0 +1,154 @@
+/* PTC ยื่นเสนอยา — ต่อยอดจาก ../record/css/app.css (สี/ปุ่ม/การ์ดใช้ของเดิม) */
+
+/* ฟอนต์ใบพิมพ์: TH Sarabun New (SIPA ฟรี ตระกูลเดียวกับ TH SarabunPSK) ฝังมากับเว็บ
+   ทุกเครื่องจึงวัดความยาวบรรทัดได้เท่ากัน ตัวอย่างบนจอ = กระดาษที่พิมพ์ออกมา */
+/* ใช้ TH SarabunPSK ที่ติดตั้งในเครื่องก่อน (ตรงกับ Word) ถ้าไม่มีจึงใช้ไฟล์ในเว็บ */
+@font-face { font-family: "PTC Sarabun"; src: local("TH SarabunPSK"), local("THSarabunPSK"), local("TH Sarabun New"), local("THSarabunNew"), url("../fonts/THSarabunNew-webfont.woff") format("woff"); font-weight: 400; font-display: block; }
+@font-face { font-family: "PTC Sarabun"; src: local("TH SarabunPSK Bold"), local("THSarabunPSK-Bold"), local("TH Sarabun New Bold"), local("THSarabunNew-Bold"), url("../fonts/THSarabunNew_bold-webfont.woff") format("woff"); font-weight: 700; font-display: block; }
+
+.ptc-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px; align-items: start; }
+@media (max-width: 980px) { .ptc-grid { grid-template-columns: minmax(0, 1fr); } }
+.preview-rail { position: sticky; top: 96px; display: grid; gap: 10px; min-width: 0; }
+.preview-tabs { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+.fitbar { font-size: .84rem; font-weight: 700; }
+.fitbar.ok { color: var(--ok); } .fitbar.bad { color: var(--bad); }
+.fit-note { font-size: .78rem; display: flex; justify-content: space-between; gap: 8px; color: var(--color-text-muted); }
+.fit-note .bad { color: var(--bad); font-weight: 700; }
+textarea.over, .field.over textarea { border-color: var(--bad) !important; background: var(--bad-bg) !important; }
+.sec-card { display: grid; gap: 14px; }
+.sec-card h2 { font-size: 1.05rem; margin: 0; display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
+.sec-card h2 small { font-weight: 400; color: var(--color-text-muted); font-size: .8rem; }
+.uh-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap: 4px 12px; font-size: .88rem; }
+.uh-list label { display: flex; gap: 8px; align-items: flex-start; }
+.req-star { color: var(--bad); }
+.receipt { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; border: 1px dashed var(--color-primary); background: var(--color-primary-light); border-radius: var(--radius); padding: 18px; }
+.receipt .num { font-family: var(--font-mono); font-size: 2rem; font-weight: 500; color: var(--color-primary-dark); }
+.receipt svg { width: 88px; height: 88px; background: #fff; padding: 4px; border-radius: 6px; }
+.secret { border: 1px dashed var(--color-gold); background: var(--color-gold-light); border-radius: var(--radius-sm); padding: 14px; display: grid; gap: 12px; }
+
+/* ---------- กระดาษ ---------- */
+.paperbox { width: 100%; overflow: hidden; border-radius: 4px; box-shadow: var(--shadow); background: #fff; }
+.paper { background: #fff; color: #000; font-family: "PTC Sarabun", "TH SarabunPSK", "TH Sarabun New", serif; transform-origin: 0 0; position: relative; overflow: hidden; }
+.paper .v { display: inline-block; min-width: 18mm; border-bottom: 1px dotted #000; padding: 0 1.5mm; color: #0a3a8c; vertical-align: bottom; line-height: 1.15; }
+.paper .v.grow { min-width: 40mm; }
+.paper .c { text-align: center; }
+.paper .sm { font-size: 12pt; }
+.paper svg { display: block; }
+
+/* 1.2 A4 แนวตั้ง */
+/* ใบ 1.2 จัดเหมือนไฟล์ Word: ขอบ บน 10 ขวา 12.65 ล่าง 12 ซ้าย 15 mm, TH SarabunPSK 16pt, บรรทัด 19pt */
+.p12 { width: 210mm; height: 297mm; padding: 8mm 12.65mm 10mm 15mm; font-size: 16pt; line-height: 18pt; }
+.p12 table.hd { width: 100%; border-collapse: collapse; table-layout: fixed; }
+.p12 table.hd > tbody > tr > td { padding: 0; border: 0; vertical-align: middle; }
+.p12 .hd-logo { width: 22.9mm; }
+.p12 .hd-logo img { width: 20mm; height: 20mm; display: block; }
+.p12 .hd-rcv { width: 52.9mm; vertical-align: top !important; }
+.p12 .ttl { display: block; box-sizing: border-box; margin: 0 auto; width: 93.5mm; border: 1.5pt solid #000; border-right-width: 4.5pt; border-bottom-width: 4.5pt; padding: 0 1.5mm; font-size: 20pt; font-weight: 700; line-height: 22pt; text-align: center; white-space: nowrap; }
+.p12 table.rcv { width: 100%; border-collapse: collapse; font-size: 12pt; line-height: 12.5pt; text-align: center; table-layout: fixed; }
+.p12 table.rcv td { border: .75pt solid #000; padding: 0 1mm; }
+.p12 table.rcv .code { font-size: 14pt; line-height: 15pt; font-weight: 700; color: #0a3a8c; white-space: nowrap; }
+.p12 .items { margin-top: 4pt; }
+.p12 .ln { display: flex; align-items: flex-start; }
+.p12 .ln .n { flex: 0 0 9mm; }
+.p12 .lr { flex: 1; display: block; min-width: 0; overflow-wrap: anywhere; }
+.p12 .tb { display: inline-block; white-space: nowrap; padding-right: 2mm; box-sizing: border-box; }
+.p12 .sg { display: flex; align-items: baseline; flex: 1 1 auto; min-width: 0; }
+.p12 .sg .tx { flex: 0 1 auto; min-width: 0; overflow-wrap: anywhere; }
+.p12 .sg.pl { flex: 0 0 auto; white-space: nowrap; }
+.p12 .sg.pl:last-child { flex: 1 1 auto; }
+.p12 .sg .dots { flex: 1 1 0; min-width: 4mm; margin: 0 1mm 0 .5mm; }
+.p12 .v { color: #0a3a8c; border: 0; padding: 0; min-width: 0; display: inline; }
+.p12 .rd { display: inline-block; width: 1.1em; text-align: center; font-family: "Segoe UI Symbol", "DejaVu Sans", sans-serif; font-size: 13pt; }
+.p12 .box { --lines: 5; flex: 1; min-width: 0; max-height: calc(18pt * var(--lines)); overflow: hidden; white-space: pre-wrap; overflow-wrap: anywhere; }
+.p12 .box.over { background-color: #ffd9d4; }
+.p12 table.sig { width: 100%; margin-top: 12pt; border-collapse: collapse; table-layout: fixed; font-size: 16pt; line-height: 18pt; }
+.p12 table.sig td { vertical-align: bottom; text-align: center; padding: 0; border: 0; white-space: nowrap; }
+.p12 table.sig td.qr { text-align: left; vertical-align: top; }
+.p12 table.sig td.l { text-align: left; }
+.p12 table.sig td.dl { border-bottom: 1.2pt dotted #000 !important; }
+.p12 table.sig td.pn { display: flex; justify-content: space-between; }
+.p12 table.sig tr.sr td:not(.qr) { padding-top: 28pt; }
+.p12 table.sig td.qr svg { width: 14mm; height: 14mm; }
+.p12 table.sig td.qr .sm { font-size: 9pt; line-height: 11pt; }
+.p12 .fm { position: absolute; right: 12.65mm; bottom: 4mm; font-size: 12pt; line-height: 1; }
+
+/* 1.1 A4 แนวนอน */
+.p11 { width: 297mm; height: 210mm; padding: 8mm 9.75mm; font-size: 14pt; line-height: 1.08; }
+.p11 .t11 { text-align: center; font-weight: 700; font-size: 17pt; margin-bottom: 2mm; position: relative; }
+.p11 .hdr11 { position: absolute; top: 2.5mm; right: 9.75mm; font-weight: 700; font-size: 14pt; line-height: 1; color: #0a3a8c; }
+.p11 .cb { font-family: "Segoe UI Symbol", "DejaVu Sans", sans-serif; }
+.p11 td.c1 { font-size: 13pt; }
+.p11 td.c4 p.ck { font-size: 12pt; }
+.p11 table.g11 { width: 277.5mm; border-collapse: collapse; table-layout: fixed; font-size: 14pt; }
+.p11 th, .p11 td, .p11 tr:last-child td { border: 1px solid #000; vertical-align: top; padding: 1.2mm 1.8mm; }
+.p11 th { font-weight: 700; text-align: center; padding: 1mm; font-size: 14pt; }
+.p11 .col { height: 170mm; overflow: hidden; }
+.p11 .col.over { background: #ffd9d4; }
+.p11 p { margin: 0 0 1mm; white-space: pre-wrap; word-break: break-word; }
+.p11 p.ck { margin: 0; }
+.p11 hr { border: 0; border-top: 1px solid #000; margin: 1.5mm -1.8mm; }
+.p11 .tbf { color: #999; font-style: italic; }
+
+/* ---------- พิมพ์ ---------- */
+.print-only { display: none; }
+@media print {
+  @page { margin: 0; }
+  @page land { size: A4 landscape; margin: 0; }
+  @page port { size: A4 portrait; margin: 0; }
+  body { background: #fff !important; }
+  body > *:not(.print-only) { display: none !important; }
+  .print-only { display: block !important; }
+  .print-only .paper { transform: none !important; box-shadow: none; page-break-after: always; break-after: page; }
+  .print-only .p11 { page: land; }
+  .print-only .p12 { page: port; }
+  .paper .v, .p12 .box, .p11 .hdr11, .p12 table.rcv .code { color: #000; }
+  .p12 .box.over, .p11 .col.over { background-color: transparent; }
+}
+
+/* ---------- เช็คสถานะ ---------- */
+.steps { list-style: none; margin: 14px 0 0; padding: 0; }
+.steps li { display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: 12px; padding-bottom: 16px; position: relative; }
+.steps li::before { content: ""; position: absolute; left: 14px; top: 26px; bottom: 0; width: 2px; background: var(--color-border); }
+.steps li:last-child::before { display: none; }
+.steps .dot { width: 30px; height: 30px; border-radius: 50%; border: 2px solid var(--color-border); background: var(--color-surface); display: grid; place-items: center; font-weight: 800; font-size: .8rem; z-index: 1; }
+.steps .done .dot { background: var(--color-primary); border-color: var(--color-primary); color: #fff; }
+.steps .now .dot { border-color: var(--warn); background: var(--warn-bg); color: var(--warn); }
+.steps .bad .dot { border-color: var(--bad); background: var(--bad-bg); color: var(--bad); }
+.steps small { display: block; color: var(--color-text-muted); }
+.note-box { background: var(--warn-bg); color: var(--color-text); border-radius: var(--radius-sm); padding: 10px 14px; white-space: pre-wrap; margin-top: 6px; }
+
+/* ---------- หน้าเภสัชกร ---------- */
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+.kpi { padding: 14px 16px; }
+.kpi .n { font-size: 1.9rem; font-weight: 800; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.kpi .l { font-size: .8rem; color: var(--color-text-muted); }
+.kpi.alert { border-color: var(--warn); } .kpi.alert .n { color: var(--warn); }
+table.list { width: 100%; border-collapse: collapse; font-size: .88rem; }
+table.list th, table.list td { padding: 8px 10px; border-bottom: 1px solid var(--color-border); text-align: left; vertical-align: top; }
+table.list th { font-size: .76rem; color: var(--color-text-muted); background: var(--color-bg-alt); white-space: nowrap; }
+table.list tr.click { cursor: pointer; } table.list tr.click:hover td { background: var(--color-primary-light); }
+table.list td.num, table.list th.num { text-align: right; font-variant-numeric: tabular-nums; }
+table.list tfoot td { font-weight: 800; background: var(--color-bg-alt); }
+.chk-row { display: grid; grid-template-columns: 3rem minmax(0, 1fr) auto; gap: 8px; align-items: center; padding: 6px 0; border-bottom: 1px solid var(--color-border); font-size: .88rem; }
+.tri { display: inline-flex; border: 1px solid var(--color-border); border-radius: var(--radius-pill); overflow: hidden; }
+.tri button { border: 0; background: var(--color-surface); color: var(--color-text-muted); font: inherit; font-size: .76rem; font-weight: 700; padding: 3px 10px; cursor: pointer; }
+.tri button[aria-pressed="true"][data-v="ok"] { background: var(--ok-bg); color: var(--ok); }
+.tri button[aria-pressed="true"][data-v="fix"] { background: var(--warn-bg); color: var(--warn); }
+.tri button[aria-pressed="true"][data-v="missing"] { background: var(--bad-bg); color: var(--bad); }
+.tri button[aria-pressed="true"][data-v="na"] { background: var(--color-bg-alt); color: var(--color-text); }
+.detail-head { display: flex; gap: 10px 16px; align-items: center; flex-wrap: wrap; justify-content: space-between; }
+.subtabs { display: flex; gap: 4px; flex-wrap: wrap; border-bottom: 1px solid var(--color-border); margin: 12px 0 16px; }
+.subtabs button { border: 0; background: none; font: inherit; font-weight: 600; color: var(--color-text-muted); padding: 8px 12px; border-bottom: 3px solid transparent; cursor: pointer; }
+.subtabs button[aria-selected="true"] { color: var(--color-text); border-color: var(--color-primary); }
+.mailbox { white-space: pre-wrap; font-size: .86rem; background: var(--color-bg-alt); border-radius: var(--radius-sm); padding: 12px; max-height: 260px; overflow: auto; }
+
+/* landing */
+.land-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+.land-card { display: grid; gap: 6px; padding: 20px; text-decoration: none; color: inherit; border: 1px solid var(--color-border, #dfe3e0); transition: border-color .15s, transform .15s; }
+.land-card:hover { border-color: var(--color-primary, #00744b); transform: translateY(-1px); }
+.land-card b { font-size: 1.15rem; color: var(--color-primary, #00744b); }
+.land-card span { color: var(--color-text-muted, #616b64); }
+.land-steps { margin: 0; padding-left: 1.3em; display: grid; gap: 6px; }
+
+/* app.css ยังไม่ได้จัดรูป email/tel */
+input[type=email], input[type=tel], input[type=search] { width: 100%; border: 1px solid var(--color-border); background: var(--color-bg); border-radius: var(--radius-sm); padding: 9px 12px; min-width: 0; font: inherit; color: inherit; }

@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>งานยาเข้า PTC | งานเภสัชสนเทศ</title>
+  <meta name="robots" content="noindex">
+  <script>
+    (function () { try { var t = localStorage.getItem("dis-theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {} })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../record/css/app.css?v=2">
+  <link rel="stylesheet" href="css/ptc.css?v=6">
+</head>
+<body>
+<header class="site-header">
+  <div class="nav-pill">
+    <div class="brand"><span class="logo-badge">PTC</span><span class="brand-text">งานยาเข้า PTC<span class="brand-sub">สำหรับเภสัชกร</span></span></div>
+    <nav class="tabs" role="tablist" id="tabs" hidden>
+      <button class="tab" role="tab" data-view="list">รายการที่ยื่น</button>
+      <button class="tab" role="tab" data-view="detail" id="tabDetail" hidden>รายละเอียด</button>
+      <button class="tab" role="tab" data-view="stats">สถิติ</button>
+      <a class="tab" href="../record/index.html">DIS Record</a>
+    </nav>
+    <span class="user-chip" id="userChip" hidden><button class="btn btn-ghost btn-sm" id="btnLogout" type="button">ออก</button></span>
+    <button class="theme-toggle" id="themeToggle" aria-label="สลับโหมดมืด/สว่าง" type="button"><svg viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></button>
+  </div>
+</header>
+
+<main class="wrap" style="margin-top:24px">
+
+<section class="view" id="v-login" hidden>
+  <div class="login-wrap">
+    <form class="card login-card" id="loginForm">
+      <div><div class="eyebrow">สำหรับเภสัชกร</div><h1 style="font-size:1.4rem">เข้าสู่ระบบ</h1><p class="sub">ใช้บัญชีเดียวกับ DIS Record</p></div>
+      <div class="field"><label for="lg-email">อีเมล</label><input type="text" id="lg-email" autocomplete="username" inputmode="email"></div>
+      <div class="field"><label for="lg-pass">รหัสผ่าน</label><input type="password" id="lg-pass" autocomplete="current-password" style="width:100%;border:1px solid var(--color-border);background:var(--color-bg);border-radius:var(--radius-sm);padding:9px 12px"></div>
+      <div class="err" id="lg-err" hidden></div>
+      <button class="btn btn-primary" type="submit" style="justify-content:center">เข้าสู่ระบบ</button>
+    </form>
+  </div>
+</section>
+
+<!-- ============ รายการ ============ -->
+<section class="view" id="v-list" hidden>
+  <div class="view-head">
+    <div><div class="eyebrow">ปีงบประมาณ <span id="fyLabel"></span></div><h1>รายการยาที่ยื่นเสนอ</h1></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+      <select id="fySel" aria-label="ปีงบ" style="width:auto"></select>
+      <button class="btn btn-primary" id="xlsBtn" type="button">ดาวน์โหลด Excel</button>
+    </div>
+  </div>
+  <div class="kpis" id="kpis"></div>
+  <div class="filters" style="margin-top:18px">
+    <input type="search" id="q" placeholder="ค้นเลขรับ ชื่อยา บริษัท แพทย์" style="flex:1;min-width:220px">
+    <div class="choices" id="chips"></div>
+  </div>
+  <div class="table-wrap"><table class="list"><thead><tr>
+    <th>เลขรับ</th><th>รายการยา</th><th>ประเภท</th><th>กลุ่มงาน</th><th class="num">กลุ่ม</th><th>ผู้แทน</th><th>สถานะ</th><th>อัปเดต</th>
+  </tr></thead><tbody id="rows"></tbody></table></div>
+  <p class="hint" id="emptyNote" hidden>ยังไม่มีรายการ ส่งลิงก์ <span class="mono" id="submitLink"></span> ให้ผู้แทนได้เลย</p>
+</section>
+
+<!-- ============ รายละเอียด ============ -->
+<section class="view" id="v-detail" hidden>
+  <div class="card">
+    <div class="detail-head">
+      <div><div class="eyebrow" id="dEyebrow"></div><h1 id="dTitle" style="font-size:1.3rem;margin:4px 0 0"></h1></div>
+      <div id="dPill"></div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px" id="quick"></div>
+    <div class="subtabs" role="tablist">
+      <button data-sub="check" aria-selected="true">เช็คลิสต์</button>
+      <button data-sub="data" aria-selected="false">ข้อมูล 1.1 / 1.2</button>
+      <button data-sub="log" aria-selected="false">สถานะ &amp; ยืม-คืนแฟ้ม</button>
+      <button data-sub="print" aria-selected="false">พิมพ์ / Word</button>
+      <button data-sub="contact" aria-selected="false">ติดต่อผู้แทน</button>
+    </div>
+
+    <div data-pane="check">
+      <div id="chkList"></div>
+      <div class="field" style="margin-top:12px"><label for="chkNote">หมายเหตุถึงผู้แทน (จะแสดงในหน้าเช็คสถานะ)</label><textarea id="chkNote" rows="3"></textarea></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
+        <button class="btn btn-ghost" id="chkSave" type="button">บันทึกเช็คลิสต์</button>
+        <button class="btn btn-primary" id="chkFix" type="button">แจ้งแก้ไข</button>
+        <button class="btn btn-primary" id="chkPass" type="button">ตรวจผ่าน (ลงนาม 1.2 แล้ว)</button>
+      </div>
+    </div>
+
+    <div data-pane="data" hidden>
+      <div class="ptc-grid">
+        <form id="df" style="display:grid;gap:14px;min-width:0" novalidate>
+          <div class="secret"><b>ช่องลับ (เห็นเฉพาะเภสัชกร พิมพ์เฉพาะฉบับเข้าที่ประชุม)</b><div id="dsConf" style="display:grid;gap:12px"></div></div>
+          <div class="row">
+            <div class="field"><label for="d-rep_name">ผู้แทน</label><input type="text" id="d-rep_name"></div>
+            <div class="field"><label for="d-company">บริษัท</label><input type="text" id="d-company"></div>
+          </div>
+          <div class="row">
+            <div class="field"><label for="d-email">อีเมล</label><input type="email" id="d-email"></div>
+            <div class="field"><label for="d-phone">โทร</label><input type="tel" id="d-phone"></div>
+          </div>
+          <div class="row">
+            <div class="field"><label for="d-kind">ประเภทการเสนอ</label><select id="d-kind"><option value="new">เข้าใหม่</option><option value="replace">ทดแทน</option></select></div>
+            <div class="field"><label for="d-dept">กลุ่มงาน</label><input type="text" id="d-dept" list="deptList"><datalist id="deptList"></datalist></div>
+          </div>
+          <div id="dsRep" style="display:grid;gap:12px"></div>
+          <button class="btn btn-primary" type="submit" style="justify-content:center">บันทึกข้อมูล</button>
+        </form>
+        <aside class="preview-rail">
+          <div class="preview-tabs"><div class="seg"><button type="button" data-dpv="12" aria-pressed="true">ใบ 1.2</button><button type="button" data-dpv="11" aria-pressed="false">ใบ 1.1 (ฉบับที่ประชุม)</button></div><span class="fitbar" id="dFit"></span></div>
+          <div class="paperbox" id="dPv"></div>
+        </aside>
+      </div>
+    </div>
+
+    <div data-pane="log" hidden>
+      <div class="grid g-wide">
+        <div class="card" style="box-shadow:none">
+          <h3 style="margin-top:0">เปลี่ยนสถานะ</h3>
+          <div class="row">
+            <div class="field"><label for="stSel">สถานะ</label><select id="stSel"></select></div>
+          </div>
+          <div class="field" style="margin-top:10px"><label for="stNote">หมายเหตุถึงผู้แทน</label><textarea id="stNote" rows="2"></textarea></div>
+          <button class="btn btn-primary" id="stSave" type="button" style="margin-top:10px">บันทึกสถานะ</button>
+          <h3>ยืม / คืนแฟ้ม</h3>
+          <div class="row">
+            <div class="field"><label for="bName">ชื่อผู้รับ/ผู้ส่งแฟ้ม</label><input type="text" id="bName"></div>
+            <div class="field"><label for="bPhone">เบอร์โทร</label><input type="tel" id="bPhone"></div>
+          </div>
+          <div class="field" style="margin-top:10px"><label for="bNote">หมายเหตุ</label><input type="text" id="bNote" placeholder="เช่น ยืมไปทำสำเนา 3 ชุด"></div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
+            <button class="btn btn-ghost" id="bOut" type="button">ให้ยืมแฟ้มออก</button>
+            <button class="btn btn-ghost" id="bIn" type="button">รับแฟ้มคืน (เอกสารครบ)</button>
+          </div>
+        </div>
+        <div><h3 style="margin-top:0">ประวัติ</h3><div class="table-wrap"><table class="list"><thead><tr><th>เวลา</th><th>รายการ</th><th>รายละเอียด</th></tr></thead><tbody id="evRows"></tbody></table></div></div>
+      </div>
+    </div>
+
+    <div data-pane="print" hidden>
+      <p class="sub">ฉบับผู้แทนไม่มีช่องลับ ฉบับที่ประชุมมีราคากลางและรายการยาที่มีแล้วครบ</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-primary" data-pr="12">พิมพ์ 1.2</button>
+        <button class="btn btn-primary" data-pr="11c">พิมพ์ 1.1 ฉบับที่ประชุม</button>
+        <button class="btn btn-ghost" data-pr="11">พิมพ์ 1.1 ฉบับผู้แทน</button>
+        <button class="btn btn-ghost" data-wd="12">Word 1.2</button>
+        <button class="btn btn-ghost" data-wd="11c">Word 1.1 ฉบับที่ประชุม</button>
+      </div>
+      <h3>พิมพ์รวมทั้งปี</h3>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+        <select id="bulkDept"></select>
+        <button class="btn btn-ghost" id="bulk11" type="button">พิมพ์ 1.1 ฉบับที่ประชุมทุกรายการของกลุ่มงานนี้</button>
+      </div>
+    </div>
+
+    <div data-pane="contact" hidden>
+      <dl class="kv" id="ctKv"></dl>
+      <h3>ข้อความแจ้งผู้แทน</h3>
+      <div class="field"><label for="mailTpl">แบบข้อความ</label><select id="mailTpl">
+        <option value="fix">แจ้งแก้ไขเอกสาร</option><option value="passed">ตรวจผ่าน มารับแฟ้ม</option><option value="received">รับแฟ้มแล้ว</option></select></div>
+      <div class="mailbox" id="mailBody" style="margin-top:10px"></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
+        <a class="btn btn-primary" id="mailGo" href="#">เปิดอีเมล</a>
+        <button class="btn btn-ghost" id="mailCopy" type="button">คัดลอกข้อความ</button>
+        <a class="btn btn-ghost" id="telGo" href="#">โทร</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ สถิติ ============ -->
+<section class="view" id="v-stats" hidden>
+  <div class="view-head"><div><div class="eyebrow">ปีงบประมาณ <span id="fyLabel2"></span></div><h1>สถิติเอกสารที่เสนอ แยกตามกลุ่มงาน</h1>
+    <p class="sub">ไม่นับรายการที่ถอนเรื่อง · "ไม่ผ่านเกณฑ์" แสดงแยกท้ายตาราง</p></div></div>
+  <div class="table-wrap"><table class="list" id="statTbl"></table></div>
+  <p class="hint" id="statNote"></p>
+</section>
+</main>
+<div class="toast" id="toast" hidden></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="../record/js/config.js?v=1"></script>
+<script src="js/ptc-forms.js?v=5"></script>
+<script src="js/ptc-common.js?v=5"></script>
+<script src="js/ptc-docx.js?v=5"></script>
+<script src="js/admin.js?v=5"></script>
+</body>
+</html>

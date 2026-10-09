@@ -37,6 +37,14 @@ dis-site/
 - schema ฐานข้อมูล + สคริปต์ย้ายข้อมูลเก่าอยู่นอก repo ที่ `S:\Claudy\web\dis-record-mockup\supabase-schema.sql` และ `S:\Claudy\web\dis-record\tools\` (มีข้อความคำถามจริง ห้าม commit เข้า repo นี้)
 - Supabase ต้อง **ปิด "Allow new users to sign up"** ไว้เสมอ ไม่งั้นใครก็สมัครแล้วเห็นข้อมูลได้
 
+## ระบบยื่นเสนอยาเข้า PTC (`ptc/`)
+
+ผู้แทนกรอกเอกสาร 1.1/1.2 ออนไลน์ ได้เลขรับ P70-NNN และติดตามสถานะได้ เภสัชกรตรวจเช็คลิสต์ ยืม-คืนแฟ้ม และส่งออก Word/Excel ข้อมูลอยู่ใน Supabase โปรเจกต์เดียวกับ `record/` (ต้องรัน `ptc-schema.sql` ก่อนใช้) ใช้ `record/js/config.js` และ `record/css/app.css` ร่วมกัน
+
+- `ptc/submit.html` — ฟอร์มผู้แทน · `ptc/status.html` — เช็คสถานะ · `ptc/admin.html` — หน้าเภสัชกร (login เดียวกับ DIS Record)
+- ช่องข้อมูลลับของ 1.1 (ราคาทุน/รายการเดิม) เก็บในตาราง staff-only ไม่อยู่ใน repo
+- วิธีใช้งานละเอียดอยู่ในวิธีปฏิบัติ WI-PHA-XXX
+
 ## วิธีเพิ่มข่าว (Newsletter)
 
 ข่าวทุกชิ้นอยู่ใน `data/news.json` — หน้าแรกโชว์ 6 ชิ้นล่าสุดแบบย่อ, หน้า `news.html` โชว์ทั้งหมดแบบเต็ม + ตัวกรองหมวด
