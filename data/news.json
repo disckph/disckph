@@ -1,5 +1,36 @@
 [
     {
+        "id":  "2569-10c-gpo-discontinue-nevirapine",
+        "issue":  "2569-10c",
+        "date":  "2026-09-22",
+        "tag":  "ยกเลิกจำหน่าย",
+        "company":  "องค์การเภสัชกรรม (GPO)",
+        "title":  "GPO ยกเลิกผลิตและจำหน่าย 2 รายการ ตั้งแต่เดือน ต.ค. 2569",
+        "summary":  "ยกเลิกผลิตและจำหน่าย GPO-VIR Z 250 และ NERAVIR 200 mg (ขนาดบรรจุ 60's ทั้งคู่) ตั้งแต่เดือนตุลาคม 2569 เป็นต้นไป",
+        "points":  [
+                       "GPO-VIR Z 250: NEVIRAPINE 200 mg + LAMIVUDINE 150 mg + ZIDOVUDINE 250 mg TABLETS · 60's",
+                       "NERAVIR: NEVIRAPINE TABLETS 200 mg · 60's",
+                       "ยกเลิกการผลิตและจำหน่าย ตั้งแต่เดือนตุลาคม พ.ศ. 2569 เป็นต้นไป"
+                   ],
+        "ref":  "หนังสือ อภ. ที่ สธ 5102/ตบ/ร/ว.410/2569 ลงวันที่ 22 ก.ย. 2569",
+        "link":  ""
+    },
+    {
+        "id":  "2569-10c-tman-bisacodyl",
+        "issue":  "2569-10c",
+        "date":  "2026-09-17",
+        "tag":  "ยาขาดคราว",
+        "company":  "T.MAN Pharmaceutical",
+        "title":  "Bisacodyl 5 mg สีชมพู ขาดสต็อก — บริษัทเสนอยาทดแทนเป็น Bisacodyl 5 mg สีเหลือง",
+        "summary":  "Bisacodyl 5 mg (Pink FCT ขวด 1×1000's) ขาดสต็อก บริษัทเสนอ Bisacodyl 5 mg (Yellow FCT ขวด 1×1000's) ทดแทน",
+        "points":  [
+                       "ขาดสต็อก: BISACODYL PINK FCT (BOT) (1×1000's) — Bisacodyl 5 mg · จำนวน 10 ขวด",
+                       "ยาทดแทนที่บริษัทเสนอ: BISACODYL YELLOW FCT (BOT 1×1000's) — Bisacodyl 5 mg · จำนวน 10 ขวด"
+                   ],
+        "ref":  "หนังสือ ที.แมน ฟาร์มาซูติคอล ที่ กท.148/2569 ลงวันที่ 17 ก.ย. 2569",
+        "link":  ""
+    },
+    {
         "id":  "2569-10b-ckph-pilomac-substitute",
         "issue":  "2569-10b",
         "date":  "2026-10-05",
