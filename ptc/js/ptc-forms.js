@@ -245,12 +245,12 @@
       return Math.max(8, Math.floor(maxPt * avail / w * 2) / 2);
     } catch (e) { return maxPt; }
   }
-  var ACK_LINE_MM = 168;   // ความกว้างบรรทัดในใบรับทราบ 172 mm เผื่อเส้นจุดใต้คำตอบ
+  var ACK_LINE_MM = 179;   // ความกว้างบรรทัดในใบรับทราบ 183 mm เผื่อเส้นจุดใต้คำตอบ
   /* หัวข้อละบรรทัด ข้อความยาวจะย่อตัวอักษรให้อยู่บรรทัดเดียว คืน [[หัวข้อ, ค่า, pt]] */
   function ackHead(d) {
     var f = d.f12 || {};
     return [["บริษัทผู้เสนอขายยา", d.company], ["ชื่อการค้า", f.trade], ["ชื่อสามัญทางยา", f.generic]].map(function (h) {
-      return [h[0], h[1] || "", h[1] ? fitPt(h[0] + "  " + h[1], 14, ACK_LINE_MM) : 14];
+      return [h[0], h[1] || "", h[1] ? fitPt(h[0] + "  " + h[1], 16, ACK_LINE_MM) : 16];
     });
   }
   function render13(d) {

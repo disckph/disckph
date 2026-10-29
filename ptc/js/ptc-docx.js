@@ -200,14 +200,14 @@
     return zip(files);
   };
   /* ---------- แบบรับทราบและยินยอมปฏิบัติตามแนวทาง (.docx) ข้อความจาก P.ACK_* ใน ptc-forms.js ---------- */
-  var L13 = 320, S13 = 28;              // บรรทัด 16pt (exact) ตัวอักษร 14pt ต้องตรงกับหน้าเว็บ .p13
+  var L13 = 340, S13 = 32;              // บรรทัด 17pt (exact) ตัวอักษร 16pt ต้องตรงกับหน้าเว็บ .p13
   function documentXml13(d) {
-    var rep = d.kind === "replace", W13 = 9752;   // A4 11906 - ซ้าย 1134 - ขวา 1020
+    var rep = d.kind === "replace", W13 = 10375;  // A4 11906 - ซ้าย 851 - ขวา 680
     function q(content, o) { o = o || {}; o.line = o.line || L13; return p(content, o); }
     function rr(t, o) { o = o || {}; o.sz = o.sz || S13; return run(t, o); }
     var ck = function (on) { return run(on ? "◉" : "○", { sym: true, sz: 26 }) + rr(" "); };
     var bAll = { borders: true };
-    var CW = [454, 8051, 1247];
+    var CW = [454, 8674, 1247];
     var rows = ['<w:trPr><w:tblHeader/></w:trPr>' + ["ที่", "เงื่อนไข", "ลงชื่อย่อ"].map(function (h, i) {
       return cell(CW[i], q(rr(h, { b: true }), { align: "center" }), bAll); }).join("")];
     P.ACK_ITEMS.forEach(function (it, i) {
@@ -240,7 +240,7 @@
     return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
       '<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><w:body>' +
       body.join("") +
-      '<w:sectPr><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="680" w:right="1020" w:bottom="567" w:left="1134" w:header="284" w:footer="227" w:gutter="0"/></w:sectPr></w:body></w:document>';
+      '<w:sectPr><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="454" w:right="680" w:bottom="340" w:left="851" w:header="284" w:footer="227" w:gutter="0"/></w:sectPr></w:body></w:document>';
   }
   P.docx13 = function (d) {
     var enc = new TextEncoder();
