@@ -216,12 +216,12 @@
   function detailDoc() {
     var all = P.readFields($("dsRep")), s = P.split(all);
     return { code: cur.code, created_at: cur.created_at, kind: $("d-kind").value, dept: $("d-dept").value.trim(), company: $("d-company").value.trim(),
-      f12: s.f12, f11: s.f11, statusUrl: P.statusUrl(cur.code), logo: P.logo() };
+      rep_name: $("d-rep_name").value.trim(), phone: $("d-phone").value.trim(), f12: s.f12, f11: s.f11, statusUrl: P.statusUrl(cur.code), logo: P.logo() };
   }
   function renderDetailPaper() {
     var d = detailDoc(), conf = P.readFields($("dsConf"));
     P.toggleConditional($("df"), d.kind, d.f12.group);
-    dMounted = P.mountPaper($("dPv"), dpv === "12" ? P.render12(d) : P.render11(d, conf));
+    dMounted = P.mountPaper($("dPv"), dpv === "12" ? P.render12(d) : dpv === "13" ? P.render13(d) : P.render11(d, conf));
     var o = P.overflow(dMounted.paper);
     $("dFit").className = "fitbar " + (o.length ? "bad" : "ok");
     $("dFit").textContent = o.length ? "ล้นกรอบ: " + o.map(P.overflowLabel).join(", ") : "พอดี A4";
@@ -242,17 +242,18 @@
   });
 
   /* พิมพ์ / Word */
-  function docOf(r) { return { code: r.code, created_at: r.created_at, kind: r.kind, dept: r.dept, company: r.company, f12: r.f12, f11: r.f11, statusUrl: P.statusUrl(r.code), logo: P.logo() }; }
+  function docOf(r) { return { code: r.code, created_at: r.created_at, kind: r.kind, dept: r.dept, company: r.company, rep_name: r.rep_name, phone: r.phone, f12: r.f12, f11: r.f11, statusUrl: P.statusUrl(r.code), logo: P.logo() }; }
   document.querySelectorAll("[data-pr]").forEach(function (b) {
     b.onclick = function () {
       var d = docOf(cur), w = b.dataset.pr;
-      P.print([w === "12" ? P.render12(d) : P.render11(d, w === "11c" ? curConf : null)]);
+      P.print([w === "12" ? P.render12(d) : w === "13" ? P.render13(d) : P.render11(d, w === "11c" ? curConf : null)]);
     };
   });
   document.querySelectorAll("[data-wd]").forEach(function (b) {
     b.onclick = function () {
       var d = docOf(cur), w = b.dataset.wd;
       if (w === "12") P.downloadDocx12(d, cur.code + " ใบ 1.2 " + (cur.f12.trade || ""));
+      else if (w === "13") P.downloadDocx13(d, cur.code + " แบบรับทราบ " + (cur.f12.trade || ""));
       else P.wordDoc(P.render11(d, curConf), true, P.WORD_CSS, cur.code + " ใบ 1.1 " + (cur.f12.trade || ""));
     };
   });

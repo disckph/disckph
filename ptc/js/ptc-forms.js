@@ -24,7 +24,8 @@
     ["1.9", "GMP/PIC/S โรงงานผลิตยาและวัตถุดิบ"], ["1.10", "Stability data"],
     ["1.11", "เอกสารอนุญาตจำหน่ายในประเทศผู้ผลิต (ยานำเข้า)"], ["1.12", "RMP และ Elemental Impurities Risk Assessment (หากมี)"],
     ["1.13", "หลักฐานมีจำหน่ายใน รพ. เครือข่าย UHosNet อย่างน้อย 1 แห่ง"], ["2.1", "เอกสารวิชาการเพิ่มเติม (ถ้ามี)"],
-    ["2.2", "BE / biosimilar จากสถาบันในประเทศไทย (ถ้ามี)"], ["2.3", "หลักฐานยานวัตกรรมไทย (ถ้ามี)"]
+    ["2.2", "BE / biosimilar จากสถาบันในประเทศไทย (ถ้ามี)"], ["2.3", "หลักฐานยานวัตกรรมไทย (ถ้ามี)"],
+    ["รับทราบ", "แบบรับทราบและยินยอมปฏิบัติตามแนวทาง ลงชื่อย่อครบทุกข้อ และลงนาม"]
   ];
 
   /* ช่องข้อมูลทั้งหมด
@@ -216,6 +217,67 @@
     "</div>";
   }
 
+  /* ---------- ใบรับทราบและยินยอมปฏิบัติตามแนวทาง (A4 แนวตั้ง) ----------
+     ผู้แทนลงชื่อย่อกำกับทีละข้อ ข้อความตรงกับแนวทาง รพจ-70 (เลขข้อในวงเล็บ) ใช้ร่วมกับไฟล์ Word (ptc-docx.js) */
+  var ACK_TITLE = "แบบรับทราบและยินยอมปฏิบัติตามแนวทางการเสนอยาเข้า";
+  var ACK_SUB = "บัญชียาโรงพยาบาลเจริญกรุงประชารักษ์ ปีงบประมาณ 2570";
+  var ACK_INTRO = "ข้าพเจ้าได้รับและอ่านแนวทางปฏิบัติในการเสนอยาเข้าฯ ปีงบประมาณ 2570 ครบทุกข้อแล้ว ขอรับทราบและยินยอมปฏิบัติตามเงื่อนไขต่อไปนี้ โดยลงชื่อย่อกำกับทุกข้อ";
+  var ACK_ITEMS = [
+    ["จัดเรียงเอกสารตามลำดับในแนวทาง ข้อ 1 และข้อ 2 หัวข้อใดไม่มีข้อมูลให้ระบุว่า “ไม่มีข้อมูล” และทำดัชนีชี้บ่ง (index) ชัดเจน", "5"],
+    ["ใบคำร้องขอนำยาเข้าฯ (FM-PHA-042 rev.05) ต้องกรอกโดยการพิมพ์เท่านั้น ไม่รับเอกสารที่เขียนด้วยลายมือ", "1.2"],
+    ["ราคาที่เสนอเป็นราคาสุทธิต่อหน่วยรวมภาษีมูลค่าเพิ่ม ยืนราคาอย่างน้อย 1 ปี และไม่สูงกว่าราคากลางและราคาที่ขายให้โรงพยาบาลในสังกัดสำนักการแพทย์", "1.3 และ 10"],
+    ["หากเอกสารไม่ครบถ้วน ไม่ถูกต้อง หรือส่งเกินกำหนดเวลา จะไม่นำยารายการนี้เข้าพิจารณาในรอบนั้น และไม่รับเอกสารเพิ่มเติมหรือแก้ไขหลังกำหนดเวลา", "9"],
+    ["กรณีเป็นรายการยาที่ต้องบรรจุในเครื่องจัดและจ่ายยาอัตโนมัติ ไม่ว่าจะเป็นยาเสนอเข้าใหม่ ยาทดแทน หรือยาที่อยู่ในบัญชียาโรงพยาบาล บริษัทยินยอมชำระค่าใช้จ่ายในการส่งตั้งค่าการผลิตและจัดทำกระบอกบรรจุยา ตามมูลค่าในใบเสนอราคาที่โรงพยาบาลได้รับจากบริษัทเครื่องจัดและจ่ายยาอัตโนมัติ", "11"],
+    ["หากมีการเปลี่ยนแปลงใด ๆ เกี่ยวกับยา บริษัทจะทำหนังสือแจ้งผู้อำนวยการโรงพยาบาลและหัวหน้ากลุ่มงานเภสัชกรรมทันที และส่งเอกสารทางอีเมล dis.ckph@gmail.com", "13"],
+    ["หากภายหลังพบว่าเอกสารไม่ถูกต้อง ข้อมูลไม่ตรงความจริง หรือราคาสูงกว่าที่ขายให้โรงพยาบาลสังกัดกรุงเทพมหานคร คณะกรรมการฯ มีสิทธิ์ตัดยาออกจากบัญชียาโรงพยาบาล", "14"],
+    ["ผลการพิจารณาของคณะกรรมการเภสัชกรรมและการบำบัดถือเป็นที่สิ้นสุด และไม่คืนเอกสารและยาตัวอย่างทุกกรณี", "15"]
+  ];
+  function ackText(it) { return it[0] + " (แนวทางข้อ " + it[1] + ")"; }
+  var ACK_CLOSE = "ข้าพเจ้าขอยืนยันว่าได้อ่านและเข้าใจเงื่อนไขข้างต้นทุกข้อแล้ว และจะไม่ขอผ่อนผันหรือขอยกเว้นเงื่อนไขใดภายหลัง";
+  /* ขนาดตัวอักษร (pt) ที่ทำให้ข้อความยาวไม่เกิน widthMm ในบรรทัดเดียว (ไม่เกิน maxPt ต่ำสุด 8pt) ใช้ทั้งหน้าเว็บและ Word */
+  var fitCtx = null;
+  function fitPt(text, maxPt, widthMm, bold) {
+    try {
+      fitCtx = fitCtx || document.createElement("canvas").getContext("2d");
+      fitCtx.font = (bold ? "bold " : "") + maxPt + 'pt "PTC Sarabun", "TH SarabunPSK", "TH Sarabun New", serif';
+      var w = fitCtx.measureText(text).width, avail = widthMm * 96 / 25.4;
+      if (w <= avail) return maxPt;
+      return Math.max(8, Math.floor(maxPt * avail / w * 2) / 2);
+    } catch (e) { return maxPt; }
+  }
+  var ACK_LINE_MM = 168;   // ความกว้างบรรทัดในใบรับทราบ 172 mm เผื่อเส้นจุดใต้คำตอบ
+  /* หัวข้อละบรรทัด ข้อความยาวจะย่อตัวอักษรให้อยู่บรรทัดเดียว คืน [[หัวข้อ, ค่า, pt]] */
+  function ackHead(d) {
+    var f = d.f12 || {};
+    return [["บริษัทผู้เสนอขายยา", d.company], ["ชื่อการค้า", f.trade], ["ชื่อสามัญทางยา", f.generic]].map(function (h) {
+      return [h[0], h[1] || "", h[1] ? fitPt(h[0] + "  " + h[1], 14, ACK_LINE_MM) : 14];
+    });
+  }
+  function render13(d) {
+    var rep = d.kind === "replace";
+    function r(on) { return '<span class="rd">' + (on ? "&#9673;" : "&#9675;") + "</span> "; }
+    return '' +
+    '<div class="paper p13" data-paper="13">' +
+      '<div class="rc13">เลขรับ <b>' + esc(d.code || "รอบันทึก") + "</b></div>" +
+      '<div class="t13">' + esc(ACK_TITLE) + '</div><div class="s13">' + esc(ACK_SUB) + "</div>" +
+      ackHead(d).map(function (h) {
+        return '<div class="ln13 one" style="font-size:' + h[2] + 'pt">' + h[0] + ' <span class="v">' + (h[1] ? esc(h[1]) : "") + "</span></div>";
+      }).join("") +
+      '<div class="ln13">' + r(!rep) + "เสนอเป็นยาเข้าใหม่&nbsp;&nbsp;&nbsp; " + r(rep) + "เสนอเพื่อทดแทนยาเดิม</div>" +
+      '<p class="in13">' + esc(ACK_INTRO) + "</p>" +
+      '<table class="g13"><colgroup><col style="width:8mm"><col><col style="width:22mm"></colgroup>' +
+        "<tr><th>ที่</th><th>เงื่อนไข</th><th>ลงชื่อย่อ</th></tr>" +
+        ACK_ITEMS.map(function (it, i) { return '<tr><td class="c">' + (i + 1) + "</td><td>" + esc(ackText(it)) + "</td><td></td></tr>"; }).join("") +
+      "</table>" +
+      '<p class="in13">' + esc(ACK_CLOSE) + "</p>" +
+      '<table class="sg13"><tr>' +
+        "<td>ลงชื่อ ..............................................<br>(..............................................)<br>ผู้มีอำนาจลงนาม<br>วันที่ ........../........../..........</td>" +
+        "<td>ลงชื่อ ..............................................<br>(" + (d.rep_name ? '<span class="v">' + esc(d.rep_name) + "</span>" : "..............................................") + ")<br>ผู้แทนบริษัท" + (d.phone ? " โทร. " + esc(d.phone) : "") + "<br>วันที่ ........../........../..........</td>" +
+      "</tr></table>" +
+      '<div class="st13">สำหรับเจ้าหน้าที่&nbsp; ผู้รับเอกสาร ..........................................&nbsp; วันที่รับ ........../........../..........</div>' +
+    "</div>";
+  }
+
   /* ตรวจว่าเนื้อหาล้นกรอบหรือไม่ (ต้องเรียกหลังใบถูกใส่ใน DOM แล้ว) คืนค่า [{where, label}] */
   function overflow(paperEl) {
     var out = [];
@@ -229,7 +291,7 @@
       if (o) out.push("col" + b.dataset.col);
     });
     // ทั้งหน้าเกิน A4 (เช่น ช่องบรรทัดเดียวยาวจนขึ้นบรรทัดใหม่หลายบรรทัด ดันลายเซ็นตกขอบ)
-    if (paperEl.scrollHeight > paperEl.clientHeight + 1) out.push(paperEl.classList.contains("p11") ? "page11" : "page12");
+    if (paperEl.scrollHeight > paperEl.clientHeight + 1) out.push(paperEl.classList.contains("p11") ? "page11" : paperEl.classList.contains("p13") ? "page13" : "page12");
     return out;
   }
   function linesUsed(box) {
@@ -264,6 +326,7 @@
     "table.g11 p{margin:0 0 2pt} p.ck{margin:0} .cb{font-family:'Segoe UI Symbol'} .tbf{color:#888}";
 
   window.PTC = { BOX_LINES: BOX_LINES, BOX_LABEL: BOX_LABEL, FIELDS: FIELDS, UHOSNET: UHOSNET, DEPTS: DEPTS, NED: NED, CHECKLIST: CHECKLIST,
-    render12: render12, render11: render11, overflow: overflow, linesUsed: linesUsed, wordDoc: wordDoc, WORD_CSS: WORD_CSS,
+    render12: render12, render11: render11, render13: render13,
+    ACK_TITLE: ACK_TITLE, ACK_SUB: ACK_SUB, ACK_INTRO: ACK_INTRO, ACK_ITEMS: ACK_ITEMS, ACK_CLOSE: ACK_CLOSE, ackText: ackText, ackHead: ackHead, fitPt: fitPt, overflow: overflow, linesUsed: linesUsed, wordDoc: wordDoc, WORD_CSS: WORD_CSS,
     esc: esc, thDateLong: thDateLong, thDateShort: thDateShort, qrSvg: qrSvg };
 })();

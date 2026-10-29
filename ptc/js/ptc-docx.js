@@ -1,4 +1,4 @@
-/* ใบ 1.2 เป็นไฟล์ Word (.docx) จริง — ฟอนต์ TH SarabunPSK 16 จัดหน้าตามแบบ FM-PHA-042 rev.05
+/* ใบ 1.2 และแบบรับทราบ เป็นไฟล์ Word (.docx) จริง — ฟอนต์ TH SarabunPSK 16 จัดหน้าตามแบบ FM-PHA-042 rev.05
    เปิดใน Word แล้วพิมพ์ได้ตรงแบบ ใช้ทั้งหน้าผู้แทนและหน้าเภสัชกร (ไม่ต้องพึ่งไลบรารีภายนอก) */
 (function () {
   "use strict";
@@ -13,7 +13,9 @@
   function run(text, o) {
     o = o || {};
     var pr = (o.sym ? '<w:rFonts w:ascii="' + SYM + '" w:hAnsi="' + SYM + '" w:cs="' + SYM + '"/>' : "") + (o.b ? "<w:b/><w:bCs/>" : "") +
-      (o.sz ? '<w:sz w:val="' + o.sz + '"/><w:szCs w:val="' + o.sz + '"/>' : "") + (o.u ? '<w:u w:val="dotted"/>' : "");
+      (o.sz ? '<w:sz w:val="' + o.sz + '"/><w:szCs w:val="' + o.sz + '"/>' : "") + (o.u ? '<w:u w:val="dotted"/>' : "") +
+      // ข้อความไทยต้องติด cs + ภาษาไทย ไม่งั้น Word ตัดบรรทัดเฉพาะตรงเว้นวรรค (ไม่ตัดคำไทย)
+      (/[\u0E00-\u0E7F]/.test(text) ? '<w:cs/><w:lang w:val="en-US" w:bidi="th-TH"/>' : "");
     return "<w:r>" + (pr ? "<w:rPr>" + pr + "</w:rPr>" : "") + '<w:t xml:space="preserve">' + x(text) + "</w:t></w:r>";
   }
   function multi(text, o) {           // ข้อความหลายบรรทัด (มี \n)
@@ -196,6 +198,71 @@
     ];
     if (qr) files.push(["word/media/qr.gif", qr]);
     return zip(files);
+  };
+  /* ---------- แบบรับทราบและยินยอมปฏิบัติตามแนวทาง (.docx) ข้อความจาก P.ACK_* ใน ptc-forms.js ---------- */
+  var L13 = 320, S13 = 28;              // บรรทัด 16pt (exact) ตัวอักษร 14pt ต้องตรงกับหน้าเว็บ .p13
+  function documentXml13(d) {
+    var rep = d.kind === "replace", W13 = 9752;   // A4 11906 - ซ้าย 1134 - ขวา 1020
+    function q(content, o) { o = o || {}; o.line = o.line || L13; return p(content, o); }
+    function rr(t, o) { o = o || {}; o.sz = o.sz || S13; return run(t, o); }
+    var ck = function (on) { return run(on ? "◉" : "○", { sym: true, sz: 26 }) + rr(" "); };
+    var bAll = { borders: true };
+    var CW = [454, 8051, 1247];
+    var rows = ['<w:trPr><w:tblHeader/></w:trPr>' + ["ที่", "เงื่อนไข", "ลงชื่อย่อ"].map(function (h, i) {
+      return cell(CW[i], q(rr(h, { b: true }), { align: "center" }), bAll); }).join("")];
+    P.ACK_ITEMS.forEach(function (it, i) {
+      rows.push('<w:trPr><w:cantSplit/></w:trPr>' + cell(CW[0], q(rr(String(i + 1)), { align: "center" }), bAll) + cell(CW[1], q(rr(P.ackText(it))), bAll) + cell(CW[2], q(""), bAll));
+    });
+    var dots = new Array(52).join("."), dt = "วันที่ ........../........../..........";
+    function sigCell(lines) { return cell(W13 / 2, lines.map(function (t) { return q(rr(t), { align: "center", line: 360 }); }).join("")); }
+    var sig = table([W13 / 2, W13 / 2], [
+      sigCell(["ลงชื่อ " + dots, "(" + dots + ")", "ผู้มีอำนาจลงนาม", dt]) +
+      sigCell(["ลงชื่อ " + dots, "(" + (d.rep_name ? " " + d.rep_name + " " : dots) + ")", "ผู้แทนบริษัท" + (d.phone ? " โทร. " + d.phone : ""), dt])
+    ], { pad: 0 });
+    var top = '<w:pBdr><w:top w:val="single" w:sz="6" w:space="2" w:color="000000"/></w:pBdr>';
+    var body = [
+      q(rr("เลขรับ ") + rr(d.code || "รอบันทึก", { b: true }), { align: "right" }),
+      q(run(P.ACK_TITLE, { b: true, sz: 36 }), { align: "center", line: 420, before: 60 }),
+      q(run(P.ACK_SUB, { b: true, sz: 32 }), { align: "center", line: 380 }),
+      P.ackHead(d).map(function (h, i) {
+        var sz = Math.round(h[2] * 2);
+        return q(run(h[0], { sz: sz }) + (h[1] ? run("\u00A0" + h[1] + "\u00A0", { sz: sz, u: true }) : rr(" " + new Array(70 - h[0].length).join("."))), { before: i ? 0 : 120 });
+      }).join(""),
+      q(ck(!rep) + rr("เสนอเป็นยาเข้าใหม่      ") + ck(rep) + rr("เสนอเพื่อทดแทนยาเดิม")),
+      q(rr("\u00A0".repeat(12) + P.ACK_INTRO), { before: 80 }),
+      '<w:p><w:pPr><w:spacing w:before="0" w:after="0" w:line="120" w:lineRule="exact"/></w:pPr></w:p>',
+      table(CW, rows, { pad: 57 }),
+      q(rr("\u00A0".repeat(12) + P.ACK_CLOSE), { before: 80 }),
+      '<w:p><w:pPr><w:spacing w:before="0" w:after="0" w:line="360" w:lineRule="exact"/></w:pPr></w:p>',
+      sig,
+      q(run("สำหรับเจ้าหน้าที่  ผู้รับเอกสาร ..........................................  วันที่รับ ........../........../..........", { sz: 24 }), { before: 200, bdr: top, line: 300 })
+    ];
+    return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+      '<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><w:body>' +
+      body.join("") +
+      '<w:sectPr><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="680" w:right="1020" w:bottom="567" w:left="1134" w:header="284" w:footer="227" w:gutter="0"/></w:sectPr></w:body></w:document>';
+  }
+  P.docx13 = function (d) {
+    var enc = new TextEncoder();
+    var rels = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">' +
+      '<Relationship Id="rStyles" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>';
+    var ct = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">' +
+      '<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/>' +
+      '<Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>' +
+      '<Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/></Types>';
+    var root = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">' +
+      '<Relationship Id="rDoc" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/></Relationships>';
+    var styles = STYLES.replace(/w:val="32"/g, 'w:val="' + S13 + '"').replace('w:line="' + LINE + '"', 'w:line="' + L13 + '"');
+    return zip([
+      ["[Content_Types].xml", enc.encode(ct)], ["_rels/.rels", enc.encode(root)],
+      ["word/document.xml", enc.encode(documentXml13(d))], ["word/styles.xml", enc.encode(styles)],
+      ["word/_rels/document.xml.rels", enc.encode(rels)]
+    ]);
+  };
+  P.downloadDocx13 = function (d, filename) {
+    var blob = P.docx13(d);
+    var a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = filename + ".docx";
+    document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
   };
   P.downloadDocx12 = async function (d, filename) {
     var blob = await P.docx12(d);

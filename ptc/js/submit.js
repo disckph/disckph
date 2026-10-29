@@ -35,13 +35,13 @@
   }
 
   /* ---------- ตัวอย่าง A4 + ตรวจล้นกรอบ ---------- */
-  var overs = { "12": [], "11": [] };
+  var overs = { "12": [], "11": [], "13": [] };
   function render() {
     var d = docData();
     P.toggleConditional($("f"), d.kind, d.f12.group);
     // วัดทั้ง 2 ใบ (ใบที่ไม่ได้โชว์วัดในกล่องซ่อน)
-    ["12", "11"].forEach(function (w) {
-      var html = w === "12" ? P.render12(d) : P.render11(d, null);
+    ["12", "11", "13"].forEach(function (w) {
+      var html = w === "12" ? P.render12(d) : w === "13" ? P.render13(d) : P.render11(d, null);
       if (w === pv) { mounted = P.mountPaper($("pvBox"), html); overs[w] = P.overflow(mounted.paper); }
       else { var hb = hidden(); hb.innerHTML = html; overs[w] = P.overflow(hb.firstElementChild); }
     });
@@ -57,9 +57,9 @@
         : "<span>ใบ 1.2 ใช้ " + used + " จาก " + max + " บรรทัด (รวมหัวข้อ)</span><span>" + ta.value.length + " ตัวอักษร</span>";
       ta.classList.toggle("over", over);
     });
-    var all = overs["12"].concat(overs["11"]);
+    var all = overs["12"].concat(overs["11"], overs["13"]);
     $("fitbar").className = "fitbar " + (all.length ? "bad" : "ok");
-    $("fitbar").textContent = all.length ? "ล้นกรอบ: " + all.map(P.overflowLabel).join(", ") : "พอดี A4 ทั้ง 2 ใบ";
+    $("fitbar").textContent = all.length ? "ล้นกรอบ: " + all.map(P.overflowLabel).join(", ") : "พอดี A4 ทุกใบ";
     saveDraft();
   }
   var hiddenBox;
@@ -137,8 +137,9 @@
   });
   document.querySelectorAll("[data-word]").forEach(function (b) {
     b.addEventListener("click", function () {
-      var d = docData(), name = saved.code + " ใบ " + (b.dataset.word === "12" ? "1.2 " : "1.1 ") + (d.f12.trade || "");
-      if (b.dataset.word === "12") P.downloadDocx12(d, name);
+      var w = b.dataset.word, d = docData(), name = saved.code + " " + (w === "12" ? "ใบ 1.2 " : w === "13" ? "แบบรับทราบ " : "ใบ 1.1 ") + (d.f12.trade || "");
+      if (w === "12") P.downloadDocx12(d, name);
+      else if (w === "13") P.downloadDocx13(d, name);
       else P.wordDoc(P.render11(d, null), true, P.WORD_CSS, name);
     });
   });
@@ -147,6 +148,7 @@
       var d = docData(), w = b.dataset.print, pages = [];
       if (w === "12" || w === "both") pages.push(P.render12(d));
       if (w === "11" || w === "both") pages.push(P.render11(d, null));
+      if (w === "13" || w === "both") pages.push(P.render13(d));
       P.print(pages);
     });
   });
