@@ -204,6 +204,18 @@
     if (await saveRow({ status: "complete", status_note: null }, { kind: "return", status: "complete", person: $("bName").value.trim(), person_phone: $("bPhone").value.trim(), note: $("bNote").value.trim() || null }))
       P.toast("บันทึกรับแฟ้มคืนแล้ว");
   };
+  $("bDel").onclick = async function () {
+    var typed = prompt("ลบ " + cur.code + " (" + (cur.f12.trade || "-") + " · " + cur.company + ") ถาวร\nข้อมูลช่องลับและประวัติยืม-คืนจะหายไปด้วย กู้คืนไม่ได้\n\nพิมพ์เลขรับ " + cur.code + " เพื่อยืนยัน");
+    if (typed === null) return;
+    if (typed.trim().toUpperCase() !== cur.code) return P.toast("เลขรับไม่ตรง ยังไม่ได้ลบ");
+    var r = await sb.from("ptc_submissions").delete().eq("id", cur.id).select("id");
+    if (r.error) return fail(r.error, "delete");
+    if (!r.data || !r.data.length) return P.toast("ลบไม่สำเร็จ (ไม่มีสิทธิ์หรือถูกลบไปแล้ว)");
+    P.toast("ลบ " + cur.code + " แล้ว");
+    cur = null; $("tabDetail").hidden = true;
+    try { history.replaceState(null, "", location.pathname); } catch (e) {}
+    await load(); show("list"); drawList();
+  };
   function drawEvents() {
     var name = { status: "สถานะ", borrow: "ยืมแฟ้มออก", "return": "รับแฟ้มคืน", note: "บันทึก", edit: "แก้ข้อมูล" };
     $("evRows").innerHTML = curEvents.map(function (e) {
