@@ -208,8 +208,9 @@
     var ck = function (on) { return run(on ? "◉" : "○", { sym: true, sz: 26 }) + rr(" "); };
     var bAll = { borders: true };
     var CW = [454, 8674, 1247];
-    var rows = ['<w:trPr><w:tblHeader/></w:trPr>' + ["ที่", "เงื่อนไข", "ลงชื่อย่อ"].map(function (h, i) {
-      return cell(CW[i], q(rr(h, { b: true }), { align: "center" }), bAll); }).join("")];
+    var rows = ['<w:trPr><w:tblHeader/></w:trPr>' + ["ที่", "เงื่อนไข", "✓ เพื่อยอมรับ"].map(function (h, i) {
+      var c = i < 2 ? rr(h, { b: true }) : run("✓", { sym: true, sz: S13 }) + rr(" เพื่อยอมรับ", { b: true });
+      return cell(CW[i], q(c, { align: "center" }), bAll); }).join("")];
     P.ACK_ITEMS.forEach(function (it, i) {
       rows.push('<w:trPr><w:cantSplit/></w:trPr>' + cell(CW[0], q(rr(String(i + 1)), { align: "center" }), bAll) + cell(CW[1], q(rr(P.ackText(it))), bAll) + cell(CW[2], q(""), bAll));
     });

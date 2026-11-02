@@ -107,6 +107,7 @@ textarea.over, .field.over textarea { border-color: var(--bad) !important; backg
 .p13 table.g13, .p13 table.sg13 { font-size: 16pt; }
 .p13 table.g13 th { font-weight: 700; text-align: center; font-size: 16pt; letter-spacing: 0; text-transform: none; color: #000; background: none; }
 .p13 table.g13 td.c { text-align: center; }
+.p13 .tick { font-family: "Segoe UI Symbol", "DejaVu Sans", sans-serif; font-size: 13pt; }
 .p13 table.sg13 { width: 100%; border-collapse: collapse; table-layout: fixed; margin-top: 4mm; }
 .p13 table.sg13 td { text-align: center; vertical-align: top; padding: 0; border: 0; line-height: 18pt; }
 .p13 .st13 { margin-top: 2.5mm; font-size: 12pt; border-top: .75pt solid #000; padding-top: 1.5mm; }
