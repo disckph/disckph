@@ -103,7 +103,9 @@ textarea.over, .field.over textarea { border-color: var(--bad) !important; backg
 .p13 p.in13 { margin: 1mm 0; text-indent: 12mm; }
 .p13 table.g13 { width: 100%; border-collapse: collapse; table-layout: fixed; }
 .p13 table.g13 th, .p13 table.g13 td { border: .75pt solid #000; padding: .3mm 1.5mm; vertical-align: top; overflow-wrap: anywhere; }
-.p13 table.g13 th { font-weight: 700; text-align: center; }
+/* กัน table/th ของ app.css (0.86rem, ตัวพิมพ์ใหญ่, สีเทา) มาย่อตัวอักษรในใบ */
+.p13 table.g13, .p13 table.sg13 { font-size: 16pt; }
+.p13 table.g13 th { font-weight: 700; text-align: center; font-size: 16pt; letter-spacing: 0; text-transform: none; color: #000; background: none; }
 .p13 table.g13 td.c { text-align: center; }
 .p13 table.sg13 { width: 100%; border-collapse: collapse; table-layout: fixed; margin-top: 4mm; }
 .p13 table.sg13 td { text-align: center; vertical-align: top; padding: 0; border: 0; line-height: 18pt; }
