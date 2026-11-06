@@ -85,7 +85,7 @@ textarea.over, .field.over textarea { border-color: var(--bad) !important; backg
 .p11 .col { height: 170mm; overflow: hidden; }
 .p11 .col.over { background: #ffd9d4; }
 .p11 p { margin: 0 0 1mm; white-space: pre-wrap; word-break: break-word; }
-.p11 p.ck { margin: 0; padding-left: 1.3em; text-indent: -1.3em; }   /* ชื่อยาวตกบรรทัดสองให้เยื้องตรงกับตัวหนังสือ ไม่อยู่ใต้ช่องติ๊ก */
+.p11 p.ck { margin: 0; }   /* ระยะเยื้องบรรทัดสอง (margin-left/text-indent) ใส่เป็น inline style ใน render11 ให้ Word อ่านได้ด้วย */
 .p11 p.ck .cb { display: inline-block; width: 1.05em; text-indent: 0; }
 .p11 hr { border: 0; border-top: 1px solid #000; margin: 1.5mm -1.8mm; }
 .p11 .tbf { color: #999; font-style: italic; }
