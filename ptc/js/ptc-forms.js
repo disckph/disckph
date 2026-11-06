@@ -302,6 +302,14 @@
 
   /* ---------- ดาวน์โหลดเป็นไฟล์ Word (.doc แบบ HTML ที่ Word เปิดแก้ได้) ---------- */
   function wordDoc(innerHtml, landscape, cssText, filename) {
+    // Word ไม่เยื้องบรรทัดสองตาม text-indent ติดลบ (ช่องติ๊กหาย) จึงแปลงรายชื่อโรงเรียนแพทย์เป็นตาราง 2 ช่อง (ช่องติ๊ก | ชื่อ) เฉพาะในไฟล์ Word
+    innerHtml = innerHtml.replace(/(?:<p class="ck"[^>]*>[\s\S]*?<\/p>)+/g, function (block) {
+      var nb = "border:none;mso-border-alt:none;padding:0;vertical-align:top;font-size:12pt";
+      var rows = block.replace(/<p class="ck"[^>]*><span class="cb">([\s\S]*?)<\/span>\s*([\s\S]*?)<\/p>/g, function (m, box, name) {
+        return '<tr><td width="16" valign="top" style="width:12pt;' + nb + '"><span class="cb">' + box + '</span></td><td valign="top" style="' + nb + '">' + name + "</td></tr>";
+      });
+      return '<table class="ckt" cellspacing="0" cellpadding="0" style="border-collapse:collapse;border:none;width:100%">' + rows + "</table>";
+    });
     var page = landscape
       ? "@page Section1{size:841.9pt 595.3pt;mso-page-orientation:landscape;margin:24pt 27.6pt 24pt 27.6pt}"
       : "@page Section1{size:595.3pt 841.9pt;margin:36pt 42pt 30pt 48pt}";
