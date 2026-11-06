@@ -323,7 +323,7 @@
     ".hdr11{text-align:right;font-weight:bold;font-size:14pt;margin:0} .t11{text-align:center;font-weight:bold;font-size:16pt}" +
     "table.g11{border-collapse:collapse;font-size:14pt;line-height:1.1} table.g11 th,table.g11 td{border:1pt solid #000;padding:3pt 5pt;vertical-align:top} table.g11 th{font-size:14pt}" +
     "td.c1,td.c1 p{font-size:13pt} td.c2,td.c2 p,td.c3,td.c3 p,td.c4,td.c4 p{font-size:14pt} td.c4 p.ck,td.c4 p.ck span{font-size:12pt}" +
-    "table.g11 p{margin:0 0 2pt} p.ck{margin:0} .cb{font-family:'Segoe UI Symbol'} .tbf{color:#888}";
+    "table.g11 p{margin:0 0 2pt} p.ck{margin:0 0 0 15pt;text-indent:-15pt} .cb{font-family:'Segoe UI Symbol'} .tbf{color:#888}";
 
   window.PTC = { BOX_LINES: BOX_LINES, BOX_LABEL: BOX_LABEL, FIELDS: FIELDS, UHOSNET: UHOSNET, DEPTS: DEPTS, NED: NED, CHECKLIST: CHECKLIST,
     render12: render12, render11: render11, render13: render13,
