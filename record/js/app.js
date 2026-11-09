@@ -401,7 +401,7 @@
     var sat = rows.filter(function (q) { return ["very","satisfied","not"].indexOf(q.satisfaction_verbal) > -1; }), satOk = sat.filter(function (q) { return q.satisfaction_verbal !== "not"; }).length;
     var tiles = [
       { l: "ความสมบูรณ์ของการบันทึก (คำตอบ · อ้างอิง · เวลา · ผลลัพธ์)", v: pct(complete, rows.length), t: 100, f: complete + " / " + rows.length + " รายการ", tgt: "เป้า 100%" },
-      { l: "คำถามเร่งด่วนตอบได้ภายใน " + URGENT_MIN + " นาที", v: pct(urgOk, urg.length), t: 60, f: urgOk + " / " + urg.length + " คำถามเร่งด่วน", tgt: "เป้า ≥ 60%" },
+      { l: "คำถามเร่งด่วนตอบได้ภายใน " + URGENT_MIN + " นาที", v: pct(urgOk, urg.length), t: 65, f: urgOk + " / " + urg.length + " คำถามเร่งด่วน", tgt: "เป้า ≥ 65%" },
       { l: "ผู้ถามเข้าใจ/คลี่คลายปัญหา", v: pct(resolved, withOut.length), t: 80, f: resolved + " / " + withOut.length + " รายการ", tgt: "เป้า ≥ 80%" },
       { l: "ความพึงพอใจของผู้รับบริการ (วาจา)", v: pct(satOk, sat.length), t: 80, f: satOk + " / " + sat.length + " ที่ได้ถาม", tgt: "เป้า ≥ 80%" }
     ];
