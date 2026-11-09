@@ -83,7 +83,7 @@
   <div class="grid g-wide" style="margin-top:16px">
     <div class="card">
       <div class="card-head">
-        <div><h2>จำนวนคำถามและร้อยละคำถามเร่งด่วนที่ตอบภายใน 10 นาที</h2><p class="sub">ตัวชี้วัดข้อ 7 และข้อ 8 · รายเดือน</p></div>
+        <div><h2>จำนวนคำถามและร้อยละคำถามเร่งด่วนที่ตอบภายใน 15 นาที</h2><p class="sub">ตัวชี้วัดข้อ 7 และข้อ 8 · รายเดือน</p></div>
         <div class="legend"><span><i style="background:var(--color-primary-light);height:10px"></i>จำนวนคำถาม</span><span><i style="background:var(--color-primary)"></i>% เร่งด่วนทันเวลา</span><span><i style="background:var(--color-gold)"></i>เป้า 80%</span></div>
       </div>
       <div style="overflow-x:auto"><svg class="chart" id="monthChart" viewBox="0 0 640 250" role="img" aria-label="กราฟรายเดือน"></svg></div>
@@ -127,7 +127,7 @@
         </div>
         <div class="field"><span class="lbl req">จุดประสงค์ของการถาม</span><div class="choices" id="c-purp"></div></div>
         <div class="field"><span class="lbl req">ความรีบด่วน</span><div class="choices" id="c-urg"></div>
-          <span class="hint">คำถามเร่งด่วน = ต้องการใช้ข้อมูลทันที มาตรฐานของหน่วยภายใน 10 นาที</span></div>
+          <span class="hint">คำถามเร่งด่วน = ต้องการใช้ข้อมูลทันที มาตรฐานของหน่วยภายใน 15 นาที</span></div>
       </fieldset>
 
       <fieldset class="card form-sec">
@@ -200,7 +200,7 @@
         <div class="eyebrow">เวลานับจากรับคำถาม</div>
         <div class="timer" id="timer">00:00</div>
         <div class="meter" aria-hidden="true"><span id="timerBar" style="width:0%"></span><i style="left:100%"></i></div>
-        <div class="tile-foot"><span>เป้าคำถามเร่งด่วน 10 นาที</span><span class="pill p-muted" id="timerPill">—</span></div>
+        <div class="tile-foot"><span>เป้าคำถามเร่งด่วน 15 นาที</span><span class="pill p-muted" id="timerPill">—</span></div>
       </div>
       <div class="card">
         <div style="display:flex;gap:14px;align-items:center;margin-bottom:12px">
@@ -245,7 +245,7 @@
 <section class="view" id="v-log" hidden>
   <div class="view-head">
     <div><div class="eyebrow">ระบบจัดเก็บข้อมูล</div><h1>ทะเบียนคำถาม</h1>
-      <p>ค้นได้จากเลขที่ ชื่อยา คำถาม หรือคำตอบ คลิกแถวเพื่อเปิดแก้ไข เวลาตอบสีแดง = คำถามเร่งด่วนที่เกิน 10 นาที</p></div>
+      <p>ค้นได้จากเลขที่ ชื่อยา คำถาม หรือคำตอบ คลิกแถวเพื่อเปิดแก้ไข เวลาตอบสีแดง = คำถามเร่งด่วนที่เกิน 15 นาที</p></div>
     <button class="btn btn-ghost" type="button" id="btnExport">ส่งออก Excel (CSV)</button>
   </div>
   <div class="card">
@@ -272,7 +272,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="js/config.js?v=1"></script>
-<script src="js/lookups.js?v=4"></script>
-<script src="js/app.js?v=6"></script>
+<script src="js/lookups.js?v=5"></script>
+<script src="js/app.js?v=7"></script>
 </body>
 </html>

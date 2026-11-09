@@ -4,6 +4,8 @@
   var C = window.DIS_CONFIG, LK = window.DIS_LOOKUPS;
   var sb = window.supabase.createClient(C.SUPABASE_URL, C.SUPABASE_ANON_KEY);
   var $ = function (id) { return document.getElementById(id); };
+  // เกณฑ์คำถามเร่งด่วน (นาที) ตัวชี้วัดข้อ 8 · ปรับจาก 10 เป็น 15 นาที (2026-11-09) รหัส immediate_10min ในฐานข้อมูลคงเดิม
+  var URGENT_MIN = 15;
   var me = null, staff = [], depts = [], currentId = null, currentRequestId = null, logRows = [];
   var MONTHS = ["ต.ค.","พ.ย.","ธ.ค.","ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย."];
 
@@ -160,9 +162,9 @@
     if (m === null) cb.innerHTML = '<span>เวลาที่ใช้ตอบ</span><strong class="num">—</strong><span class="hint">กด "ตอนนี้" เมื่อตอบเสร็จ ระบบคำนวณนาทีให้</span>';
     else if (m < 0) cb.innerHTML = '<span class="err">เวลาตอบกลับก่อนเวลารับคำถาม ตรวจวันเวลาอีกครั้ง</span>';
     else {
-      var ok = !urgent || m <= 10;
+      var ok = !urgent || m <= URGENT_MIN;
       cb.innerHTML = '<span>เวลาที่ใช้ตอบ</span><strong class="num">' + m + " นาที</strong>" +
-        (urgent ? '<span class="pill ' + (ok ? "p-ok" : "p-bad") + '">' + (ok ? "ทันเวลา (≤ 10 นาที)" : "เกินเวลาที่กำหนด") + "</span>" : '<span class="pill p-muted">ไม่ใช่คำถามเร่งด่วน</span>');
+        (urgent ? '<span class="pill ' + (ok ? "p-ok" : "p-bad") + '">' + (ok ? "ทันเวลา (≤ " + URGENT_MIN + " นาที)" : "เกินเวลาที่กำหนด") + "</span>" : '<span class="pill p-muted">ไม่ใช่คำถามเร่งด่วน</span>');
     }
     var items = checks(), n = items.filter(function (i) { return i[0]; }).length, p = Math.round(n / items.length * 100);
     $("checklist").innerHTML = items.map(function (i) {
@@ -180,8 +182,8 @@
     var sec = Math.max(0, Math.round((end - new Date(r)) / 1000));
     var h = Math.floor(sec / 3600), m = Math.floor(sec % 3600 / 60), s = sec % 60;
     $("timer").textContent = (h ? h + ":" : "") + pad(m) + ":" + pad(s);
-    $("timerBar").style.width = Math.min(100, sec / 6) + "%";
-    var urgent = getRadio("urg") === "immediate_10min", left = 600 - sec, tp = $("timerPill");
+    $("timerBar").style.width = Math.min(100, sec / (URGENT_MIN * 0.6)) + "%";
+    var urgent = getRadio("urg") === "immediate_10min", left = URGENT_MIN * 60 - sec, tp = $("timerPill");
     $("timerBar").style.background = left < 0 && urgent ? "var(--bad)" : "";
     if (!urgent) { tp.className = "pill p-muted"; tp.textContent = "ไม่เร่งด่วน"; }
     else if ($("f-done").value) { tp.className = "pill " + (left >= 0 ? "p-ok" : "p-bad"); tp.textContent = left >= 0 ? "ตอบทันเวลา" : "เกินเป้า"; }
@@ -391,7 +393,7 @@
     // ข้อมูลเดิมจาก Google Form ไม่มีเวลาตอบจริง มีแค่ช่วงเวลา (legacy.response_bucket) และประเภทแหล่งอ้างอิง
     function bucket(q) { return q.legacy && q.legacy.response_bucket; }
     function hasRef(q) { return (q.references_used || []).length || (q.legacy && (q.source_levels || []).length); }
-    function onTime(q) { return q.response_minutes != null ? q.response_minutes <= 10 : bucket(q) === "ทันที (ภายใน 10 นาที)"; }
+    function onTime(q) { return q.response_minutes != null ? q.response_minutes <= URGENT_MIN : bucket(q) === "ทันที (ภายใน 10 นาที)"; }
     var complete = rows.filter(function (q) { return q.answer && hasRef(q) && (q.answered_at || bucket(q)) && q.outcome; }).length;
     var urg = rows.filter(function (q) { return q.urgency === "immediate_10min" && (q.response_minutes != null || bucket(q)); });
     var urgOk = urg.filter(onTime).length;
@@ -399,7 +401,7 @@
     var sat = rows.filter(function (q) { return ["very","satisfied","not"].indexOf(q.satisfaction_verbal) > -1; }), satOk = sat.filter(function (q) { return q.satisfaction_verbal !== "not"; }).length;
     var tiles = [
       { l: "ความสมบูรณ์ของการบันทึก (คำตอบ · อ้างอิง · เวลา · ผลลัพธ์)", v: pct(complete, rows.length), t: 100, f: complete + " / " + rows.length + " รายการ", tgt: "เป้า 100%" },
-      { l: "คำถามเร่งด่วนตอบได้ภายใน 10 นาที", v: pct(urgOk, urg.length), t: 80, f: urgOk + " / " + urg.length + " คำถามเร่งด่วน", tgt: "เป้า > 80%" },
+      { l: "คำถามเร่งด่วนตอบได้ภายใน " + URGENT_MIN + " นาที", v: pct(urgOk, urg.length), t: 60, f: urgOk + " / " + urg.length + " คำถามเร่งด่วน", tgt: "เป้า ≥ 60%" },
       { l: "ผู้ถามเข้าใจ/คลี่คลายปัญหา", v: pct(resolved, withOut.length), t: 80, f: resolved + " / " + withOut.length + " รายการ", tgt: "เป้า ≥ 80%" },
       { l: "ความพึงพอใจของผู้รับบริการ (วาจา)", v: pct(satOk, sat.length), t: 80, f: satOk + " / " + sat.length + " ที่ได้ถาม", tgt: "เป้า ≥ 80%" }
     ];
@@ -547,7 +549,7 @@
     var r = await qy; if (r.error) return fail(r.error, "log");
     logRows = r.data || [];
     $("logBody").innerHTML = logRows.map(function (q) {
-      var late = q.urgency === "immediate_10min" && q.response_minutes != null && q.response_minutes > 10;
+      var late = q.urgency === "immediate_10min" && q.response_minutes != null && q.response_minutes > URGENT_MIN;
       var st = LK.status[q.status];
       return '<tr class="clickable" data-open="' + q.id + '"><td class="mono">' + esc(q.code) + '</td><td class="num">' + thDate(q.received_at) + "</td><td>" + esc(q.requester_type) + " · " + esc(deptName(q.department_id)) + "</td><td>" + esc((q.drugs || []).join(", ")) + "</td><td>" + esc(q.category_main || "") + "</td><td>" +
         (q.urgency === "immediate_10min" ? '<span class="pill p-warn">ทันที</span>' : esc(label(LK.urg, q.urgency))) + '</td><td class="r num' + (late ? " over" : "") + '">' + (q.response_minutes == null ? "—" : q.response_minutes + " นาที") + "</td><td>" + esc(label(LK.outcome, q.outcome)) + '</td><td><span class="pill ' + st[1] + '">' + st[0] + "</span></td></tr>";
