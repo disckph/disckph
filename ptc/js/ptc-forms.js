@@ -13,7 +13,12 @@
   var DEPTS = ["กุมารเวชกรรม", "จักษุวิทยา", "จิตเวช", "ทันตกรรม", "เวชศาสตร์ฉุกเฉิน", "เวชศาสตร์ฟื้นฟู",
     "เวชศาสตร์ผู้สูงอายุ", "รังสีวิทยา", "วิสัญญีวิทยา", "ศัลยกรรม", "สูติ-นรีเวชกรรม", "โสต ศอ นาสิก",
     "ออร์โธปิดิกส์", "อายุรกรรม", "กลุ่มงานเภสัชกรรม"];
-  var NED = [["NED", "ไม่อยู่ในบัญชียาหลัก (NED)"], ["ก", "บัญชี ก"], ["ข", "บัญชี ข"], ["ค", "บัญชี ค"], ["ง", "บัญชี ง"], ["จ(1)", "บัญชี จ(1)"], ["จ(2)", "บัญชี จ(2)"]];
+  /* บัญชียาหลักแห่งชาติ พ.ศ. 2569 ใช้บัญชีย่อยแบบใหม่ (b/s/ex/R1/R2) แทน ก-จ
+     ค่าแบบเดิม (ก ข ค ง จ(1) จ(2)) ในรายการที่ยื่นไปแล้วยังเก็บและแสดงได้ตามเดิม ดู NED_LEGACY */
+  var NED = [["NED", "ไม่อยู่ในบัญชียาหลัก (NED)"], ["b", "b บัญชียาพื้นฐาน (เดิม ก, ข)"], ["s", "s บัญชียาทางเลือก (เดิม ค)"],
+    ["ex", "ex บัญชียาเฉพาะโรค (เดิม ง)"], ["R1", "R1 บัญชียาพิเศษ (เดิม จ(1))"], ["R2", "R2 บัญชียาพิเศษ (เดิม จ(2))"]];
+  var NED_LEGACY = { "ก": "b", "ข": "b", "ค": "s", "ง": "ex", "จ(1)": "R1", "จ(2)": "R2" };
+  function nedOf(f) { var v = (f && f.ned_list) || ""; return NED_LEGACY[v] || v; }
 
   /* เช็คลิสต์ตามแนวทาง รพจ-70 (ใช้ในหน้าเภสัชกร) */
   var CHECKLIST = [
@@ -108,7 +113,7 @@
   /* ---------- ใบ 1.2 (A4 แนวตั้ง) จัดบรรทัดเหมือนไฟล์ Word ทุกบรรทัด ----------
      หน่วย: บรรทัดสูง 19pt, เลขข้อเยื้อง 9mm, ตำแหน่งแท็บเป็น mm นับจากขอบซ้ายของเนื้อหา */
   function render12(d) {
-    var f = d.f12 || {}, rep = d.kind === "replace", ned = f.ned_list || "";
+    var f = d.f12 || {}, rep = d.kind === "replace", ned = nedOf(f);
     var inNed = ned && ned !== "NED";
     var g = f.group || "";
     function v(x) { return x ? '<span class="v">' + esc(x) + "</span>" : ""; }
@@ -168,7 +173,7 @@
      conf = ช่องลับ (ส่ง null ถ้าเป็นฉบับผู้แทน → แสดงเป็นช่องว่างให้เภสัชกรเติม) */
   function render11(d, conf) {
     var f = Object.assign({}, d.f12 || {}, d.f11 || {}), c = conf || {}, rep = d.kind === "replace", staffView = !!conf;
-    var ned = f.ned_list || "";
+    var ned = nedOf(f);
     function kv(label, val) { return '<p><b>' + label + '</b> ' + br(dash(val)) + "</p>"; }
     function kb(label, val) { return '<p><b>' + label + '</b><br>' + br(dash(val)) + "</p>"; }   // คำตอบขึ้นบรรทัดใหม่ (คอลัมน์ 1 แคบ)
     function sec(label, val) { return '<p class="sec"><b>' + label + "</b><br>" + br(dash(val)) + "</p>"; }
@@ -333,7 +338,7 @@
     "td.c1,td.c1 p{font-size:13pt} td.c2,td.c2 p,td.c3,td.c3 p,td.c4,td.c4 p{font-size:14pt} td.c4 p.ck,td.c4 p.ck span{font-size:12pt}" +
     "table.g11 p{margin:0 0 2pt} p.ck{margin:0} .cb{font-family:'Segoe UI Symbol'} .tbf{color:#888}";
 
-  window.PTC = { BOX_LINES: BOX_LINES, BOX_LABEL: BOX_LABEL, FIELDS: FIELDS, UHOSNET: UHOSNET, DEPTS: DEPTS, NED: NED, CHECKLIST: CHECKLIST,
+  window.PTC = { BOX_LINES: BOX_LINES, BOX_LABEL: BOX_LABEL, FIELDS: FIELDS, UHOSNET: UHOSNET, DEPTS: DEPTS, NED: NED, NED_LEGACY: NED_LEGACY, nedOf: nedOf, CHECKLIST: CHECKLIST,
     render12: render12, render11: render11, render13: render13,
     ACK_TITLE: ACK_TITLE, ACK_SUB: ACK_SUB, ACK_INTRO: ACK_INTRO, ACK_ITEMS: ACK_ITEMS, ACK_CLOSE: ACK_CLOSE, ackText: ackText, ackHead: ackHead, fitPt: fitPt, overflow: overflow, linesUsed: linesUsed, wordDoc: wordDoc, WORD_CSS: WORD_CSS,
     esc: esc, thDateLong: thDateLong, thDateShort: thDateShort, qrSvg: qrSvg };

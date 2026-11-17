@@ -67,7 +67,12 @@
     container.querySelectorAll("[data-k]").forEach(function (el) {
       var v = data[el.dataset.k];
       if (el.classList.contains("uh-list")) el.querySelectorAll("input").forEach(function (i) { i.checked = (v || []).indexOf(i.value) > -1; });
-      else el.value = v == null ? "" : v;
+      else {
+        v = v == null ? "" : String(v);
+        // บัญชียาหลักแบบเดิม (ก-จ) ไม่มีในตัวเลือกแล้ว: เลือกหมวดใหม่ที่เทียบเท่าให้อัตโนมัติ (ข → b)
+        if (el.dataset.k === "ned_list" && P.NED_LEGACY && P.NED_LEGACY[v]) v = P.NED_LEGACY[v];
+        el.value = v;
+      }
     });
   };
   /* ซ่อน/แสดงช่องตามประเภทการเสนอและกลุ่มยา */

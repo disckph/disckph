@@ -333,7 +333,7 @@
     var main = rows.map(function (r) {
       var o = { "เลขรับ": r.code, "สถานะ": (P.STATUS[r.status] || [r.status])[0], "ประเภท": r.kind === "replace" ? "ทดแทน" : "เข้าใหม่", "กลุ่มงาน": r.dept };
       var all = Object.assign({}, r.f12, r.f11, confMap[r.id] || {});
-      cols.forEach(function (f) { var v = all[f.k]; o[f.label] = Array.isArray(v) ? v.join(", ") : (v || ""); });
+      cols.forEach(function (f) { var v = f.k === "ned_list" ? P.nedOf(all) : all[f.k]; o[f.label] = Array.isArray(v) ? v.join(", ") : (v || ""); });
       o["ผู้แทน"] = r.rep_name; o["บริษัท"] = r.company; o["อีเมล"] = r.email; o["โทร"] = r.phone;
       o["หมายเหตุถึงผู้แทน"] = r.status_note || ""; o["ผล PTC"] = r.ptc_result || "";
       o["ยื่นออนไลน์"] = thShort(r.created_at); o["อัปเดตล่าสุด"] = thShort(r.updated_at);

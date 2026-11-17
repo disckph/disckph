@@ -62,7 +62,7 @@
   function small(text, o) { o = o || {}; return p(run(text, { sz: 24, b: o.b }), { align: "center", line: 250, sz: 24 }); }
 
   function documentXml(d, hasQr) {
-    var f = d.f12 || {}, rep = d.kind === "replace", ned = f.ned_list || "", inNed = ned && ned !== "NED", g = f.group || "";
+    var f = d.f12 || {}, rep = d.kind === "replace", ned = P.nedOf(f), inNed = ned && ned !== "NED", g = f.group || "";
     // กรอบชื่อแบบฟอร์ม: ตารางช่องเดียว ขอบบน/ซ้าย 1.5pt ขอบขวา/ล่าง 4.5pt ให้ดูเป็นเงาเหมือนแบบเดิม
     var tb = function (side, sz) { return "<w:" + side + ' w:val="single" w:sz="' + sz + '" w:space="0" w:color="000000"/>'; };
     var title = '<w:tbl><w:tblPr><w:tblW w:w="5300" w:type="dxa"/><w:jc w:val="center"/><w:tblLayout w:type="fixed"/>' +

@@ -36,8 +36,10 @@
 <footer><div class="wrap">งานบริการเภสัชสนเทศ กลุ่มงานเภสัชกรรม โรงพยาบาลเจริญกรุงประชารักษ์ · dis.ckph@gmail.com</div></footer>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="../record/js/config.js?v=1"></script>
-<script src="js/ptc-forms.js?v=12"></script>
-<script src="js/ptc-common.js?v=5"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
+<script src="js/ptc-forms.js?v=13"></script>
+<script src="js/ptc-common.js?v=7"></script>
+<script src="js/ptc-docx.js?v=11"></script>
 <script>
 (function () {
   var P = window.PTC, sb = P.client(), esc = P.esc;
@@ -74,7 +76,40 @@
           (cls === "now" || cls === "bad" ? "<small>" + esc(s[2]) + "</small>" : "") + extra + "</div></li>";
       }).join("") + "</ol>";
     }
+    html += '<div class="dl-box" style="margin-top:16px;padding-top:14px;border-top:1px solid var(--line, #ddd)">' +
+      '<b>ดาวน์โหลดเอกสารที่กรอกไว้อีกครั้ง</b><div class="hint" style="margin:4px 0 10px">ไฟล์ Word จากข้อมูลล่าสุดที่บันทึกในระบบ พิมพ์ได้เลย</div>' +
+      '<div style="display:flex;gap:8px;flex-wrap:wrap">' +
+      '<button type="button" class="btn btn-primary" data-dl="12">ใบ 1.2 (Word)</button>' +
+      '<button type="button" class="btn btn-primary" data-dl="11">ใบ 1.1 (Word)</button>' +
+      '<button type="button" class="btn btn-primary" data-dl="13">แบบรับทราบ (Word)</button>' +
+      '<a class="btn btn-ghost" style="text-decoration:none;text-align:center" href="files/ptc-1.7-form.docx" download="เอกสารลำดับ 1.7 รายละเอียดของเอกสารเพิ่มเติม.docx">แบบเอกสาร 1.7 (Word เปล่า)</a>' +
+      '</div><div class="err" id="dlErr" hidden style="margin-top:8px"></div></div>';
     $("res").innerHTML = html; $("res").hidden = false;
+    lastQuery = { c: $("c").value, last4: $("l4").value }; docCache = null;
+  });
+
+  /* ---------- ดาวน์โหลดเอกสารซ้ำ (ใช้เลขรับ + เลขท้ายเบอร์ 4 ตัวเดียวกับที่ดูสถานะ) ---------- */
+  var lastQuery = null, docCache = null;
+  async function loadDoc() {
+    if (docCache) return docCache;
+    var r = await sb.rpc("ptc_docs", lastQuery);
+    if (r.error || !r.data) throw r.error || new Error("not found");
+    var d = r.data; d.statusUrl = P.statusUrl(d.code); d.logo = P.logo();
+    return (docCache = d);
+  }
+  $("res").addEventListener("click", async function (e) {
+    var b = e.target.closest("[data-dl]"); if (!b || !lastQuery) return;
+    $("dlErr").hidden = true; b.disabled = true;
+    try {
+      var d = await loadDoc(), w = b.dataset.dl, f = d.f12 || {};
+      var name = d.code + " " + (w === "12" ? "ใบ 1.2 " : w === "13" ? "แบบรับทราบ " : "ใบ 1.1 ") + (f.trade || "");
+      if (w === "12") await P.downloadDocx12(d, name);
+      else if (w === "13") await P.downloadDocx13(d, name);
+      else P.wordDoc(P.render11(d, null), true, P.WORD_CSS, name);
+    } catch (err) {
+      $("dlErr").textContent = "ดาวน์โหลดไม่สำเร็จ ลองใหม่อีกครั้ง หรือติดต่องานเภสัชสนเทศ"; $("dlErr").hidden = false;
+    }
+    b.disabled = false;
   });
   if ($("c").value) $("l4").focus();
 })();
