@@ -26,6 +26,7 @@
       <button class="tab" role="tab" data-view="record">บันทึกคำถาม</button>
       <button class="tab" role="tab" data-view="inbox">คำขอจากเว็บไซต์</button>
       <button class="tab" role="tab" data-view="log">ทะเบียนคำถาม</button>
+      <button class="tab" role="tab" data-view="works">Newsletter &amp; ยาเข้า-ออก</button>
       <button class="tab soon" type="button" disabled>ตรวจคุณภาพ</button>
       <button class="tab soon" type="button" disabled>ความพึงพอใจ</button>
       <button class="tab soon" type="button" disabled>องค์ความรู้ &amp; PTC</button>
@@ -174,9 +175,9 @@
         <div class="sec-title"><h2>5. คำตอบ</h2></div>
         <div class="field"><label for="f-ans" class="req">คำตอบและข้อแนะนำของเภสัชกร</label><textarea id="f-ans"></textarea></div>
         <div class="row">
-          <div class="field"><span class="lbl req">วิธีส่งคำตอบ</span><div class="choices" id="c-ansCh"></div></div>
+          <div class="field"><span class="lbl req">วิธีส่งคำตอบ (เลือกได้มากกว่า 1)</span><div class="choices" id="c-ansCh"></div></div>
           <div class="field"><label for="f-done" class="req">วันที่/เวลาที่ตอบกลับ</label>
-            <div style="display:flex;gap:6px"><input type="datetime-local" id="f-done"><button type="button" class="btn btn-ghost btn-sm" id="btnNow">ตอนนี้</button></div></div>
+            <div style="display:flex;gap:6px"><input type="datetime-local" id="f-done"><button type="button" class="btn btn-ghost btn-sm" id="btnNow">ตอนนี้</button></div><span class="hint">ตอบหลายรอบ ใช้เวลาที่ตอบครั้งแรก</span></div>
         </div>
         <div class="calc" id="calcBox"></div>
       </fieldset>
@@ -209,17 +210,22 @@
         </div>
         <ul class="checklist" id="checklist"></ul>
       </div>
-      <div class="card" id="replyCard" hidden>
+      <div class="card" id="replyCard">
         <h2 style="font-size:1rem">ตอบกลับผู้ถาม</h2>
         <p class="sub" id="replyTo"></p>
+        <div class="field" id="replyEmailBox" style="margin-top:10px"><label for="f-replyEmail">อีเมลผู้ถาม (ถ้าจะตอบทางอีเมล)</label><input type="text" id="f-replyEmail" inputmode="email" autocomplete="off" placeholder="ไม่บังคับ ไม่เก็บในฐานข้อมูล"></div>
         <div style="display:grid;gap:8px;margin-top:10px">
-          <a class="btn btn-primary" style="justify-content:center" id="btnGmail" href="#" target="_blank" rel="noopener">เปิด Gmail พร้อมข้อความตอบกลับ</a>
+          <a class="btn btn-primary" style="justify-content:center" id="btnGmail" href="#" target="_blank" rel="noopener" hidden>เปิด Gmail พร้อมข้อความตอบกลับ</a>
           <button type="button" class="btn btn-ghost" style="justify-content:center" id="btnCopyReply">คัดลอกข้อความตอบกลับ</button>
+          <button type="button" class="btn btn-ghost" style="justify-content:center" id="btnShareReply" hidden>แชร์ไป LINE / แอปอื่น</button>
         </div>
-        <p class="hint" style="margin-top:8px">ข้อความดึงจากคำตอบ + เอกสารอ้างอิงในแบบบันทึก พร้อมลิงก์แบบประเมิน ตรวจแล้วกดส่งเองใน Gmail</p>
-        <h2 style="font-size:.95rem;margin-top:14px">ผลแบบประเมินจากผู้ถาม</h2>
-        <div id="replySurvey" style="margin-top:6px"></div>
-        <p class="hint" style="margin-top:6px">ยังไม่รู้ผล กด "บันทึกและปิดคำถาม" ได้เลย ระบบเก็บเป็น "ตอบแล้ว รอผลประเมิน" พอผู้ถามตอบแบบประเมินแล้ว ค่อยเปิดกลับมากรอก "ผลต่อผู้ถาม" แล้วปิด</p>
+        <p class="hint" id="replyHintDirect" style="margin-top:8px">ตอบทางโทรศัพท์แล้ว: กด "ตอนนี้" ที่เวลาตอบกลับ พิมพ์คำตอบในข้อ 5 เลือกทั้งโทรศัพท์และ LINE แล้วกดคัดลอกไปวางในแชต LINE ตรวจข้อมูลผู้ป่วยก่อนส่งทุกครั้ง</p>
+        <p class="hint" id="replyHintWeb" style="margin-top:8px" hidden>ข้อความดึงจากคำตอบ + เอกสารอ้างอิงในแบบบันทึก พร้อมลิงก์แบบประเมิน ตรวจแล้วกดส่งเองใน Gmail</p>
+        <div id="replySurveyBox" hidden>
+          <h2 style="font-size:.95rem;margin-top:14px">ผลแบบประเมินจากผู้ถาม</h2>
+          <div id="replySurvey" style="margin-top:6px"></div>
+          <p class="hint" style="margin-top:6px">ยังไม่รู้ผล กด "บันทึกและปิดคำถาม" ได้เลย ระบบเก็บเป็น "ตอบแล้ว รอผลประเมิน" พอผู้ถามตอบแบบประเมินแล้ว ค่อยเปิดกลับมากรอก "ผลต่อผู้ถาม" แล้วปิด</p>
+        </div>
       </div>
       <div class="err" id="recErr" hidden></div>
       <div style="display:grid;gap:8px">
@@ -265,6 +271,44 @@
   </div>
 </section>
 
+<!-- ================= WORKS (Newsletter & ยาเข้า-ออก) ================= -->
+<section class="view" id="v-works" hidden>
+  <div class="view-head">
+    <div><div class="eyebrow">ผลงานงานเภสัชสนเทศ</div><h1>สถิติ Newsletter และยาเข้า-ออก</h1>
+      <p>Newsletter นับจากข่าวบนเว็บ และรายการยื่นเสนอยานับจากระบบออนไลน์ให้อัตโนมัติ ส่วนผลยาเข้า-ออกกรอกปีละครั้งหลังจบวาระ</p></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <select aria-label="ปีงบประมาณ" id="wkFy" style="width:auto"></select>
+      <button class="btn btn-primary" type="button" id="wkCopy">คัดลอกสรุป</button>
+      <button class="btn btn-ghost" type="button" id="wkCsv">ส่งออก Excel (CSV)</button>
+    </div>
+  </div>
+  <div class="notice" id="wkNotice" style="margin-bottom:16px" hidden></div>
+  <div class="grid g-4" id="wkTiles"></div>
+
+  <div class="grid g-wide" style="margin-top:16px">
+    <div class="card">
+      <div class="card-head"><div><h2>Newsletter รายเดือน</h2><p class="sub">จำนวนข่าวตามงวดที่เผยแพร่ ตัวเลขในวงเล็บใต้เดือน = จำนวนฉบับ</p></div></div>
+      <div style="overflow-x:auto"><svg class="chart" id="wkChart" viewBox="0 0 640 230" role="img" aria-label="จำนวนข่าวรายเดือน"></svg></div>
+    </div>
+    <div class="card"><div class="card-head"><div><h2>ข่าวแยกตามหมวด</h2></div></div><div class="hbar" id="wkTags"></div></div>
+  </div>
+
+  <div class="grid g-2" style="margin-top:16px">
+    <div class="card"><div class="card-head"><div><h2>ยื่นเสนอยาออนไลน์</h2><p class="sub">ไม่นับที่ถอนเรื่อง · <a href="../ptc/admin.html">เปิดระบบ PTC</a></p></div></div><dl class="kv" id="wkSubs"></dl><hr style="border:0;border-top:1px solid var(--color-border);margin:14px 0"><div class="hbar" id="wkSubDept"></div></div>
+    <div class="card"><div class="card-head"><div><h2>วาระยาเข้า-ออกประจำปี</h2><p class="sub">หน่วยเป็นทะเบียน</p></div></div><dl class="kv" id="wkYear"></dl>
+      <details class="more" style="margin-top:12px"><summary>แก้ไขตัวเลขรายปี</summary>
+        <form id="yrForm" style="display:grid;gap:10px;margin-top:10px"><div class="row tight" id="yrFields"></div>
+          <div class="field"><label for="yr-note">หมายเหตุ</label><input type="text" id="yr-note"></div>
+          <button class="btn btn-ghost" type="submit" style="justify-content:center">บันทึกตัวเลขปีที่เลือก</button></form></details></div>
+  </div>
+
+  <div class="card" style="margin-top:16px">
+    <div class="card-head"><div><h2>เทียบรายปีงบ</h2></div></div>
+    <div class="table-wrap"><table><thead><tr><th>ปีงบ</th><th class="r">Newsletter (ฉบับ)</th><th class="r">ข่าว</th><th class="r">คำถาม DIS</th><th class="r">ยื่นเสนอยา</th><th class="r">เข้าตามวาระ</th><th class="r">ออกตามวาระ</th><th class="r">เข้าทั้งปี</th><th class="r">ออกทั้งปี</th></tr></thead><tbody id="wkCompare"></tbody></table></div>
+    <p class="hint" style="margin:8px 0 0">เครื่องหมาย — คือยังไม่มีข้อมูลในระบบ ไม่ได้แปลว่าเป็นศูนย์</p>
+  </div>
+</section>
+
 </main>
 
 <footer><div class="wrap">งานเภสัชสนเทศ กลุ่มงานเภสัชกรรม โรงพยาบาลเจริญกรุงประชารักษ์ สำนักการแพทย์ กรุงเทพมหานคร</div></footer>
@@ -272,7 +316,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="js/config.js?v=1"></script>
-<script src="js/lookups.js?v=5"></script>
-<script src="js/app.js?v=8"></script>
+<script src="js/lookups.js?v=6"></script>
+<script src="js/app.js?v=9"></script>
 </body>
 </html>

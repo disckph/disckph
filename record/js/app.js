@@ -36,7 +36,7 @@
   function show(v) {
     document.querySelectorAll(".view").forEach(function (s) { s.hidden = s.id !== "v-" + v; });
     tabs.forEach(function (t) { t.setAttribute("aria-selected", t.dataset.view === v); });
-    if (["dashboard","record","inbox","log"].indexOf(v) > -1) { try { history.replaceState(null, "", "#" + v); } catch (e) {} }
+    if (["dashboard","record","inbox","log","works"].indexOf(v) > -1) { try { history.replaceState(null, "", "#" + v); } catch (e) {} }
     window.scrollTo({ top: 0 });
   }
   function go(v) {
@@ -44,6 +44,7 @@
     if (v === "dashboard") loadDashboard();
     if (v === "inbox") loadInbox();
     if (v === "log") loadLog();
+    if (v === "works") loadWorks();
   }
   tabs.forEach(function (t) { t.addEventListener("click", function () { if (t.dataset.view === "record" && !currentId) newRecord(); go(t.dataset.view); }); });
   document.querySelectorAll("[data-new]").forEach(function (b) { b.addEventListener("click", function () { newRecord(); go("record"); }); });
@@ -76,7 +77,7 @@
     await loadRefs();
     var v = (location.hash || "#dashboard").slice(1);
     if (v === "record") newRecord();
-    go(["dashboard","record","inbox","log"].indexOf(v) > -1 ? v : "dashboard");
+    go(["dashboard","record","inbox","log","works"].indexOf(v) > -1 ? v : "dashboard");
   }
 
   async function loadRefs() {
@@ -94,7 +95,7 @@
      RECORD FORM
      ===================================================================== */
   var form = $("disForm");
-  var MULTI = { srcType: true };
+  var MULTI = { srcType: true, ansCh: true };
   ["req","chan","purp","urg","srcType","ansCh","outcome","use","sat"].forEach(function (k) {
     $("c-" + k).innerHTML = LK[k].map(function (o, i) {
       return '<label class="choice"><input type="' + (MULTI[k] ? "checkbox" : "radio") + '" name="' + k + '" value="' + esc(o[0]) + '"><span><b>' + pad(i + 1) + "</b>" + esc(o[1]) + "</span></label>";
@@ -203,12 +204,12 @@
     $("fuNo").checked = true; $("recErr").hidden = true;
   }
 
-  /* ---------- ตอบกลับผู้ถาม (คำขอจากเว็บไซต์) ---------- */
+  /* ---------- ตอบกลับผู้ถาม (คำขอจากเว็บไซต์ และคำถามที่รับเอง เช่น โทรศัพท์) ---------- */
   var currentRequest = null;
   function replyText() {
     var x = currentRequest || {}, T = LK.replyTemplate;
     var refs = tags("refBox");
-    var body = "Dear " + (x.requester_name || $("f-name").value || "") + ",\n\n" +
+    var body = "Dear " + (x.requester_name || $("f-name").value.trim() || "Colleague") + ",\n\n" +
       "Thank you for reaching out.\n\n" +
       "Regarding your inquiry about " + ($("f-q").value.trim()) + "\n\n" +
       ($("f-ans").value.trim() || "[คำตอบ]") + "\n\n" +
@@ -216,38 +217,57 @@
       (x.survey_token ? T.surveyLine + "\n" + surveyUrl(x) + "\n\n" : "") +
       "Please feel free to reach out if you have any further questions.\n\n" +
       "Best regards,\n" + T.signature;
-    return { subject: T.subject, body: body };
+    return { subject: currentRequest ? T.subject : T.subjectDirect, body: body };
   }
   function refreshReply() {
     var x = currentRequest, card = $("replyCard");
-    card.hidden = !x;
-    if (!x) return;
-    var email = x.reply_channel === "email" && /@/.test(x.contact || "");
-    var back = { line: "LINE", phone: "โทรกลับ", email: "e-mail" }[x.reply_channel] || "";
-    $("replyTo").textContent = "ตอบกลับทาง " + back + ": " + (x.contact || "-");
+    card.hidden = !!currentRequestId && !x;   // คำขอเว็บที่ยังโหลดไม่เสร็จ/โหลดไม่สำเร็จ: ไม่ให้ตอบผิดคน
+    $("replyEmailBox").hidden = !!x; $("replySurveyBox").hidden = !x; $("replyHintWeb").hidden = !x; $("replyHintDirect").hidden = !!x;
+    if (card.hidden) return;
+    var to = x ? (x.reply_channel === "email" ? (x.contact || "").trim() : "") : $("f-replyEmail").value.trim();
+    var back = x ? { line: "LINE", phone: "โทรกลับ", email: "e-mail" }[x.reply_channel] || "" : "";
+    $("replyTo").textContent = x ? "ตอบกลับทาง " + back + ": " + (x.contact || "-") : "พิมพ์คำตอบในข้อ 5 แล้วส่งให้ผู้ถามทาง LINE หรืออีเมลได้";
+    var email = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(to);
     $("btnGmail").hidden = !email;
     if (email) {
       var m = replyText();
-      $("btnGmail").href = "https://mail.google.com/mail/?view=cm&fs=1&to=" + encodeURIComponent(x.contact.trim()) +
+      $("btnGmail").href = "https://mail.google.com/mail/?view=cm&fs=1&to=" + encodeURIComponent(to) +
         "&su=" + encodeURIComponent(m.subject) + "&body=" + encodeURIComponent(m.body);
     }
   }
+  function replyReady() {
+    if ($("f-ans").value.trim()) return true;
+    toast("พิมพ์คำตอบในข้อ 5 ก่อน"); $("f-ans").focus(); return false;
+  }
   $("btnCopyReply").addEventListener("click", function () {
+    if (!replyReady()) return;
     var t = replyText().body;
     (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject()).then(
       function () { toast("คัดลอกข้อความแล้ว วางใน LINE หรืออีเมลได้เลย"); },
       function () { window.prompt("คัดลอกข้อความนี้", t); });
   });
-  $("btnGmail").addEventListener("click", function () { refreshReply(); });
+  // มือถือ: เปิดหน้าต่างแชร์ของเครื่อง เลือก LINE แล้วเลือกแชตผู้ถาม
+  $("btnShareReply").hidden = !navigator.share;
+  $("btnShareReply").addEventListener("click", function () {
+    if (!replyReady()) return;
+    navigator.share({ text: replyText().body }).catch(function (e) { if (e && e.name !== "AbortError") toast("เปิดหน้าต่างแชร์ไม่ได้ ใช้ปุ่มคัดลอกแทน"); });
+  });
+  $("btnGmail").addEventListener("click", function (e) { if (!replyReady()) { e.preventDefault(); return; } refreshReply(); });
+  $("f-replyEmail").addEventListener("input", refreshReply);
+  $("f-replyEmail").addEventListener("keydown", function (e) { if (e.key === "Enter") e.preventDefault(); });   // กัน Enter ไปปิดคำถาม
+  var reqSeq = 0;
   async function loadRequest(id) {
-    currentRequest = null;
-    var sv = [];
-    if (id) {
-      var r = await sb.from("dis_requests").select("*").eq("id", id).maybeSingle(); currentRequest = r.data || null;
-      var s = await sb.from("survey_responses").select("*").eq("request_id", id).order("created_at", { ascending: false });
-      sv = s.data || [];
-    }
+    var seq = ++reqSeq, sv = [];
+    currentRequest = null; $("f-replyEmail").value = "";
     refreshReply();
+    if (id) {
+      var r = await sb.from("dis_requests").select("*").eq("id", id).maybeSingle();
+      var s = await sb.from("survey_responses").select("*").eq("request_id", id).order("created_at", { ascending: false });
+      if (seq !== reqSeq) return;   // เปิดรายการอื่นไปแล้วระหว่างโหลด
+      currentRequest = r.data || null;
+      sv = s.data || [];
+      refreshReply();
+    }
     // ผลแบบประเมินจากผู้ถาม (ใช้ประกอบการกรอก "ผลต่อผู้ถาม" แล้วปิดคำถาม)
     var box = $("replySurvey");
     if (!currentRequest) { box.innerHTML = ""; return; }
@@ -292,7 +312,7 @@
     $("f-sex").value = pt.sex || ""; $("f-age").value = pt.age_y || ""; $("f-wt").value = pt.weight_kg || ""; $("f-ht").value = pt.height_cm || "";
     $("f-scr").value = pt.scr || ""; $("f-hn").value = pt.hn || ""; $("f-pt").value = pt.notes || "";
     setChoice("srcType", q.source_levels || []); setTags("refBox", q.references_used); $("f-notfound").value = q.references_not_found || "";
-    $("f-ans").value = q.answer || ""; setChoice("ansCh", q.answer_channel); $("f-done").value = q.answered_at ? toLocalInput(q.answered_at) : "";
+    $("f-ans").value = q.answer || ""; setChoice("ansCh", (q.answer_channel || "").split(", ")); $("f-done").value = q.answered_at ? toLocalInput(q.answered_at) : "";
     setChoice("outcome", q.outcome); setChoice("use", q.use_result);
     $(q.followup_needed ? "fuYes" : "fuNo").checked = true;
     $("f-fudate").value = q.followup_date || ""; $("f-furesult").value = q.followup_result || "";
@@ -345,7 +365,7 @@
         references_used: tags("refBox"),
         references_not_found: $("f-notfound").value.trim() || null,
         answer: $("f-ans").value.trim() || null,
-        answer_channel: getRadio("ansCh"),
+        answer_channel: getChecks("ansCh").join(", ") || null,   // หลายช่องทางเก็บเป็นข้อความคั่นด้วย ", "
         answered_at: fromLocalInput($("f-done").value),
         outcome: getRadio("outcome"),
         use_result: getRadio("use"),
@@ -575,6 +595,159 @@
     var a = document.createElement("a");
     a.href = URL.createObjectURL(new Blob(["\ufeff" + csv], { type: "text/csv;charset=utf-8" }));
     a.download = "DIS-" + ($("logFy").value || "ทั้งหมด") + ".csv"; a.click();
+  });
+
+  /* =====================================================================
+     WORKS: สถิติ Newsletter & ยาเข้า-ออก
+     - Newsletter: ../data/news.json (+ LK.extraIssues = ฉบับที่แจก LINE แต่ไม่ได้ลงเป็นข่าว)
+     - ยื่นเสนอยา: ตาราง ptc_submissions (ไม่ดึงช่องราคา/ข้อมูลติดต่อ)
+     - ยาเข้า-ออกรายปี: ตาราง ptc_yearly (สร้างด้วย ptc-stats.sql) ยังไม่รวมมติ PTC เรื่องอื่น
+     ===================================================================== */
+  var WK = { news: [], subs: [], yearly: [], qCount: {}, ready: false };
+  var YR_N = [["submitted","ยื่นเสนอ"],["sub_new","ยื่นใหม่"],["sub_replace","ยื่นทดแทน"],["in_cycle","เข้าตามวาระ"],["in_new","เข้าใหม่"],["in_replace","ทดแทน"],["out_cycle","ออกตามวาระ"],["in_off","เข้านอกวาระ"],["out_off","ออกนอกวาระ"]];
+  var wkErr = {};
+  $("yrFields").innerHTML = YR_N.map(function (n) { return '<div class="field"><label for="yr-' + n[0] + '">' + n[1] + '</label><input type="number" min="0" step="1" id="yr-' + n[0] + '"></div>'; }).join("");
+  // งวดข่าว "2569-10b" = ปี-เดือน พ.ศ. + ฉบับที่ในเดือน
+  function issueInfo(s) { var m = /^(\d{4})-(\d{2})/.exec(s || ""); if (!m) return null; var y = +m[1], mo = +m[2]; return { fy: y + (mo >= 10 ? 1 : 0), i: (mo + 2) % 12 }; }
+  function uniq(list) { return list.filter(function (v, i) { return list.indexOf(v) === i; }); }
+  function dash(v) { return v == null ? "—" : v; }
+  // PostgREST คืนสูงสุด 1,000 แถวต่อครั้ง จึงดึงต่อจนหมด
+  async function fetchAll(make) {
+    var out = [], from = 0, r;
+    do { r = await make().range(from, from + 999); if (r.error) return r; out = out.concat(r.data || []); from += 1000; } while ((r.data || []).length === 1000);
+    return { data: out, error: null };
+  }
+
+  async function loadWorks() {
+    var err = {};
+    var res = await Promise.all([
+      fetch("../data/news.json", { cache: "no-cache" }).then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); }).catch(function (e) { err.news = e; return []; }),
+      fetchAll(function () { return sb.from("ptc_submissions").select("id,code,fiscal_year,kind,dept,status").order("id"); }),
+      fetchAll(function () { return sb.from("ptc_yearly").select("*").order("fiscal_year"); }),
+      fetchAll(function () { return sb.from("dis_questions").select("id,fiscal_year").neq("status", "draft").order("id"); })
+    ]);
+    // ประกาศเปิดตัวเว็บไม่มีงวด จึงไม่นับเป็นข่าว newsletter
+    WK.news = res[0].filter(function (n) { return issueInfo(n.issue); });
+    ["subs","yearly"].forEach(function (k, i) { var r = res[i + 1]; if (r.error) { err[k] = r.error; WK[k] = []; } else WK[k] = r.data; });
+    WK.qCount = {};
+    if (res[3].error) err.q = res[3].error; else res[3].data.forEach(function (q) { WK.qCount[q.fiscal_year] = (WK.qCount[q.fiscal_year] || 0) + 1; });
+    wkErr = err;
+    var m = [];
+    if (err.news) m.push("โหลดข่าวจากเว็บไม่สำเร็จ");
+    if (err.subs) m.push("โหลดรายการยื่นเสนอยาไม่สำเร็จ");
+    if (err.yearly) m.push("โหลดตัวเลขยาเข้า-ออกไม่สำเร็จ (ถ้ายังไม่เคยใช้ ต้องรัน ptc-stats.sql ใน Supabase ก่อน)");
+    if (err.q) m.push("โหลดจำนวนคำถามไม่สำเร็จ");
+    Object.keys(err).forEach(function (k) { console.error("works " + k, err[k]); });
+    $("wkNotice").hidden = !m.length; $("wkNotice").textContent = m.join(" · ");
+    $("yrForm").querySelector("button").disabled = !!err.yearly;
+    if (!$("wkFy").options.length) {
+      var o = ""; for (var y = fyOf(new Date()); y >= 2569; y--) o += '<option value="' + y + '">ปีงบ ' + y + "</option>";
+      $("wkFy").innerHTML = o;
+    }
+    WK.ready = true; drawWorks();
+  }
+  $("wkFy").addEventListener("change", drawWorks);
+
+  function wkStat(fy) {
+    var news = WK.news.filter(function (n) { return issueInfo(n.issue).fy === fy; });
+    var extra = LK.extraIssues.filter(function (x) { return issueInfo(x.issue).fy === fy; });
+    var issues = uniq(news.map(function (n) { return n.issue; }).concat(extra.map(function (x) { return x.issue; })));
+    var subs = WK.subs.filter(function (s) { return s.fiscal_year === fy && s.status !== "withdrawn"; });
+    var yr = WK.yearly.filter(function (y) { return y.fiscal_year === fy; })[0] || {};
+    function add(a, b) { return yr[a] != null && yr[b] != null ? yr[a] + yr[b] : null; }
+    // ถ้ากรอกตัวเลขรายปีไว้ใช้ค่านั้นก่อน ไม่งั้นนับจากระบบออนไลน์
+    var manual = yr.submitted != null, rep = subs.filter(function (x) { return x.kind === "replace"; }).length, online = !wkErr.subs && subs.length > 0;
+    return { fy: fy, news: news, issues: issues, subs: subs, rep: rep, yr: yr, inAll: add("in_cycle", "in_off"), outAll: add("out_cycle", "out_off"),
+      submitted: manual ? yr.submitted : online ? subs.length : null,
+      subNew: manual ? yr.sub_new : online ? subs.length - rep : null, subRep: manual ? yr.sub_replace : online ? rep : null };
+  }
+
+  function drawWorks() {
+    var s = wkStat(+$("wkFy").value || fyOf(new Date())), y = s.yr, none = wkErr.yearly ? "โหลดไม่สำเร็จ" : "ยังไม่ได้กรอก";
+    var tiles = [
+      ["Newsletter", wkErr.news ? "—" : s.issues.length, "ฉบับ", wkErr.news ? "โหลดไม่สำเร็จ" : s.news.length + " ข่าวบนเว็บ"],
+      ["ยื่นเสนอยา", dash(s.submitted), "รายการ", s.submitted == null ? "ยังไม่มีข้อมูล" : "เข้าใหม่ " + dash(s.subNew) + " · ทดแทน " + dash(s.subRep)],
+      ["ยาเข้าตามวาระ", dash(y.in_cycle), "ทะเบียน", y.in_cycle == null ? none : "เข้าใหม่ " + dash(y.in_new) + " · ทดแทน " + dash(y.in_replace)],
+      ["ยาออกตามวาระ", dash(y.out_cycle), "ทะเบียน", y.out_cycle == null ? none : "รวมนอกวาระ " + dash(s.outAll) + " ทะเบียน"]
+    ];
+    $("wkTiles").innerHTML = tiles.map(function (t) {
+      return '<div class="card tile"><div class="tile-label" style="min-height:0">' + t[0] + '</div><div class="tile-value">' + t[1] + " <small>" + t[2] + '</small></div><div class="tile-foot"><span class="num">' + esc(t[3]) + "</span></div></div>";
+    }).join("");
+    drawNews(s);
+    bars("wkTags", countBy(s.news, function (n) { return n.tag; }), 8);
+    var st = { wait: 0, ready: 0, ptc: 0, failed: 0 };
+    s.subs.forEach(function (x) { st[x.status === "complete" ? "ready" : x.status === "ptc" ? "ptc" : x.status === "failed" ? "failed" : "wait"]++; });
+    $("wkSubs").innerHTML = wkErr.subs ? "<dt>โหลดไม่สำเร็จ</dt><dd>—</dd>" :
+      [["ยื่นทั้งหมด", s.subs.length], ["เข้าใหม่ · ทดแทน", (s.subs.length - s.rep) + " · " + s.rep], ["อยู่ระหว่างตรวจเอกสาร", st.wait], ["เอกสารครบ รอเข้า PTC", st.ready], ["เข้าวาระ PTC แล้ว", st.ptc], ["ไม่ผ่านเกณฑ์", st.failed]]
+        .map(function (x) { return "<dt>" + x[0] + '</dt><dd class="num">' + x[1] + "</dd>"; }).join("");
+    bars("wkSubDept", wkErr.subs ? {} : countBy(s.subs, function (x) { return x.dept; }), 6);
+    $("wkYear").innerHTML = [
+      ["ยื่นเสนอตามรอบ", y.submitted == null ? "—" : y.submitted + " (ใหม่ " + dash(y.sub_new) + " · ทดแทน " + dash(y.sub_replace) + ")"],
+      ["เข้าตามวาระ", y.in_cycle == null ? "—" : y.in_cycle + " (เข้าใหม่ " + dash(y.in_new) + " · ทดแทน " + dash(y.in_replace) + ")"],
+      ["ออกตามวาระ", dash(y.out_cycle)],
+      ["เข้า · ออกนอกวาระ", dash(y.in_off) + " · " + dash(y.out_off)],
+      ["รวมเข้า · ออกทั้งปี", dash(s.inAll) + " · " + dash(s.outAll)]
+    ].map(function (x) { return "<dt>" + x[0] + '</dt><dd class="num">' + x[1] + "</dd>"; }).join("") + (y.note ? "<dt>หมายเหตุ</dt><dd>" + esc(y.note) + "</dd>" : "");
+    YR_N.forEach(function (n) { $("yr-" + n[0]).value = y[n[0]] == null ? "" : y[n[0]]; }); $("yr-note").value = y.note || "";
+    var rows = "";
+    for (var f = fyOf(new Date()); f >= 2569; f--) {
+      var c = wkStat(f);
+      rows += "<tr><td>" + f + "</td>" + [wkErr.news ? null : c.issues.length, wkErr.news ? null : c.news.length, wkErr.q ? null : (WK.qCount[f] || 0), c.submitted, c.yr.in_cycle, c.yr.out_cycle, c.inAll, c.outAll]
+        .map(function (v) { return '<td class="r num">' + dash(v) + "</td>"; }).join("") + "</tr>";
+    }
+    $("wkCompare").innerHTML = rows;
+  }
+
+  function drawNews(s) {
+    var c = new Array(12).fill(0), n = new Array(12).fill(0), W = 640, H = 230, l = 30, t = 18, b = 44, iw = W - l - 10, ih = H - t - b, bw = iw / 12, x = "";
+    s.news.forEach(function (k) { c[issueInfo(k.issue).i]++; });
+    s.issues.forEach(function (k) { n[issueInfo(k).i]++; });
+    var max = Math.max(4, Math.ceil(Math.max.apply(null, c) / 4) * 4);
+    for (var g = 0; g <= 4; g++) { var y = t + ih - ih * g / 4; x += '<line class="grid-line" x1="' + l + '" x2="' + (W - 10) + '" y1="' + y + '" y2="' + y + '"/><text x="' + (l - 8) + '" y="' + (y + 4) + '" text-anchor="end">' + (max * g / 4) + "</text>"; }
+    c.forEach(function (v, i) {
+      var h = ih * v / max, cx = l + i * bw + bw / 2;
+      if (v) x += '<rect class="bar" x="' + (cx - bw * 0.28) + '" y="' + (t + ih - h) + '" width="' + (bw * 0.56) + '" height="' + h + '" rx="4"><title>' + MONTHS[i] + " " + v + " ข่าว " + n[i] + ' ฉบับ</title></rect><text class="val" x="' + cx + '" y="' + (t + ih - h - 5) + '" text-anchor="middle">' + v + "</text>";
+      x += '<text x="' + cx + '" y="' + (H - 26) + '" text-anchor="middle">' + MONTHS[i] + "</text>" + (n[i] ? '<text x="' + cx + '" y="' + (H - 10) + '" text-anchor="middle">(' + n[i] + ")</text>" : "");
+    });
+    $("wkChart").innerHTML = x;
+  }
+
+  /* ---------- สรุปสำหรับตอบหัวหน้า / CSV ---------- */
+  function wkSummary(s) {
+    var y = s.yr, L = ["สรุปผลงานเภสัชสนเทศ ปีงบประมาณ " + s.fy + " (ข้อมูล ณ " + thDate(new Date()).slice(0, 8) + ")"];
+    if (!wkErr.news) L.push("Newsletter: " + s.issues.length + " ฉบับ " + s.news.length + " ข่าว");
+    if (!wkErr.q) L.push("คำถาม DIS: " + (WK.qCount[s.fy] || 0) + " คำถาม");
+    if (s.submitted != null) L.push("ยื่นเสนอยา: " + s.submitted + " รายการ (เข้าใหม่ " + dash(s.subNew) + " ทดแทน " + dash(s.subRep) + ")");
+    if (y.in_cycle != null) L.push("ยาเข้าตามวาระ: " + y.in_cycle + " ทะเบียน" + (s.inAll != null ? " (รวมนอกวาระ " + s.inAll + ")" : ""));
+    if (y.out_cycle != null) L.push("ยาออกตามวาระ: " + y.out_cycle + " ทะเบียน" + (s.outAll != null ? " (รวมนอกวาระ " + s.outAll + ")" : ""));
+    return L.join("\n");
+  }
+  $("wkCopy").addEventListener("click", function () {
+    if (!WK.ready) return;
+    var t = wkSummary(wkStat(+$("wkFy").value));
+    (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject()).then(function () { toast("คัดลอกสรุปแล้ว วางใน LINE ได้เลย"); }, function () { window.prompt("คัดลอกข้อความนี้", t); });
+  });
+  $("wkCsv").addEventListener("click", function () {
+    if (!WK.ready) return;
+    var s = wkStat(+$("wkFy").value), q = function (v) { return '"' + String(v == null ? "" : v).replace(/"/g, '""') + '"'; };
+    var out = [["Newsletter"], ["งวด","วันที่หนังสือ","หมวด","หัวข้อ"]].concat(s.news.map(function (n) { return [n.issue, n.date, n.tag, n.title]; }));
+    out.push([], ["ยาเข้า-ออก ปีงบ " + s.fy]);
+    YR_N.forEach(function (n) { out.push([n[1], s.yr[n[0]]]); });
+    out.push([], ["ยื่นเสนอยาออนไลน์"], ["เลขรับ","ประเภท","กลุ่มงาน","สถานะ"]);
+    s.subs.forEach(function (r) { out.push([r.code, r.kind === "replace" ? "ทดแทน" : "เข้าใหม่", r.dept, label(LK.ptcSubStatus, r.status)]); });
+    var e = document.createElement("a");
+    e.href = URL.createObjectURL(new Blob(["﻿" + out.map(function (r) { return r.map(q).join(","); }).join("\n")], { type: "text/csv;charset=utf-8" }));
+    e.download = "DIS-newsletter-drug-" + s.fy + ".csv"; e.click();
+  });
+
+  /* ---------- บันทึกตัวเลขรายปี ---------- */
+  $("yrForm").addEventListener("submit", async function (e) {
+    e.preventDefault();
+    var row = { fiscal_year: +$("wkFy").value, note: $("yr-note").value.trim() || null, updated_at: new Date().toISOString() };
+    YR_N.forEach(function (n) { var v = $("yr-" + n[0]).value; row[n[0]] = v === "" ? null : Math.max(0, parseInt(v, 10)); });
+    var r = await sb.from("ptc_yearly").upsert(row);
+    if (r.error) return fail(r.error, "yearly");
+    toast("บันทึกตัวเลขปีงบ " + row.fiscal_year + " แล้ว"); loadWorks();
   });
 
   /* ---------- go ---------- */

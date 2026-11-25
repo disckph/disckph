@@ -16,8 +16,12 @@ window.DIS_LOOKUPS = {
   // อีเมลตอบกลับคำขอจากเว็บไซต์ (ปุ่ม "เปิด Gmail พร้อมข้อความตอบกลับ") แก้หัวเรื่อง/ลายเซ็นได้ที่นี่
   replyTemplate: {
     subject: "Inquiry Response: [DIS ask.html]",
+    subjectDirect: "Inquiry Response: [DIS]",   // คำถามที่ไม่ได้ส่งผ่านเว็บ
     surveyLine: "We would appreciate your feedback on this answer (less than 30 seconds):",
     signature: "S.Upakararat\nDIS, CKP HOSP",
   },
+  // หน้า Newsletter & ยาเข้า-ออก · extraIssues = ฉบับที่ทำอินโฟกราฟิกแจก LINE แต่ไม่มีข่าวใน news.json (งวด ปี-เดือน พ.ศ.)
+  extraIssues: [{ issue: "2569-10d", title: "แบบฟอร์มกำกับการใช้ยา R2 (ร่าง)" }],
+  ptcSubStatus: [["submitted","ยื่นออนไลน์แล้ว รอส่งแฟ้ม"],["received","รับแฟ้มแล้ว รอตรวจ"],["fix","รอแก้ไขเอกสาร"],["passed","ตรวจผ่าน รอรับแฟ้มไปทำสำเนา"],["out","แฟ้มอยู่กับผู้แทน"],["complete","เอกสารครบ รอเข้าที่ประชุม PTC"],["ptc","เข้าวาระประชุม PTC แล้ว"],["failed","ไม่ผ่านเกณฑ์ / ไม่นำเสนอ"]],
   reqType: { question: "ถามข้อมูลยา", document: "ขอเอกสาร/monograph", media_training: "บริการสื่อ สารสนเทศ และองค์ความรู้เกี่ยวกับยา" },
 };
